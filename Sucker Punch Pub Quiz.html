@@ -1,0 +1,1808 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sucker Punch Pub Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ink:#0A0A0A; --panel:#141414; --panel2:#1C1C1C; --line:#2A2A28; --line2:#3C3C38;
+  --bone:#F4F1E6; --dim:#9C9A90; --faint:#6A6863;
+  --yl:#F2C10D; --yl-hi:#FFD634; --yl-lo:#6E5806; --yl-soft:rgba(242,193,13,.12);
+  --display:"Big Shoulders Display","Haettenschweiler","Arial Narrow",sans-serif;
+  --body:"Newsreader",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ink); color:var(--bone);
+  font-family:var(--body); font-size:16px; line-height:1.5; min-height:100vh;
+  background-image:radial-gradient(1100px 620px at 50% -12%, rgba(242,193,13,.09), transparent 62%);
+  background-attachment:fixed;
+}
+button{font-family:inherit; color:inherit; cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--yl); outline-offset:3px}
+h1,h2,h3{margin:0; text-wrap:balance}
+.app{max-width:1200px; margin:0 auto; padding:0 22px 130px; display:flex; flex-direction:column; min-height:100vh}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky; top:0; z-index:40; display:flex; align-items:center; gap:18px;
+  padding:14px 0 12px; background:linear-gradient(var(--ink) 74%, rgba(10,10,10,0));
+}
+.brand{display:flex; align-items:baseline; gap:11px; background:none; border:0; padding:0}
+.brand .mark{font-family:var(--display); font-weight:900; font-size:25px; letter-spacing:.03em; line-height:1; text-transform:uppercase}
+.brand .mark em{color:var(--yl); font-style:normal}
+.brand .sub{font-family:var(--mono); font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--faint)}
+.rail{display:flex; gap:6px; margin-left:auto; flex-wrap:wrap}
+.rchip{
+  font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  background:var(--panel); border:1px solid var(--line); color:var(--dim);
+  padding:7px 13px; border-radius:2px; transition:.15s;
+}
+.rchip:hover{border-color:var(--yl-lo); color:var(--bone)}
+.rchip[aria-current="true"]{background:var(--yl); border-color:var(--yl); color:#100D00; font-weight:600}
+
+/* ---------- primitives ---------- */
+.panel{background:var(--panel); border:1px solid var(--line); border-radius:3px}
+.stack{display:flex; flex-direction:column; gap:20px}
+.bar{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--faint)}
+.dtitle{font-family:var(--display); font-weight:900; letter-spacing:.01em; line-height:.92; text-transform:uppercase}
+.note{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint)}
+.hidden{display:none !important}
+.rule{height:1px; background:linear-gradient(90deg,transparent,var(--line2),transparent); margin:8px 0}
+
+.btn{
+  font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  background:var(--panel2); border:1px solid var(--line2); color:var(--bone);
+  padding:11px 18px; border-radius:2px; transition:.15s;
+}
+.btn:hover{border-color:var(--yl); color:var(--yl)}
+.btn.primary{background:var(--yl); border-color:var(--yl); color:#100D00; font-weight:600}
+.btn.primary:hover{background:var(--yl-hi); color:#100D00}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.32; cursor:not-allowed}
+.btn.sm{padding:8px 12px; font-size:11px}
+.btn.big{padding:16px 30px; font-size:14px}
+.btn.huge{padding:20px 46px; font-size:17px; letter-spacing:.2em}
+
+/* ---------- title screen ---------- */
+.hero{padding:52px 0 12px; text-align:center}
+.hero .kick{font-family:var(--mono); font-size:11px; letter-spacing:.42em; text-transform:uppercase; color:var(--yl)}
+.hero .dtitle{font-size:clamp(56px,12.5vw,148px); margin-top:16px}
+.hero .dtitle em{font-style:normal; color:var(--yl); display:block}
+.hero .tag{margin-top:16px; font-size:19px; color:var(--dim); font-style:italic}
+.roundgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin-top:26px}
+.rcard{
+  background:var(--panel); border:1px solid var(--line); border-radius:3px; padding:22px;
+  text-align:left; display:flex; flex-direction:column; gap:12px; transition:.18s;
+}
+.rcard:hover{border-color:var(--yl); transform:translateY(-2px)}
+.rcard .no{font-family:var(--display); font-weight:900; font-size:50px; line-height:.78; color:var(--line2)}
+.rcard:hover .no{color:var(--yl)}
+.rcard h3{font-family:var(--display); font-weight:700; font-size:28px; text-transform:uppercase}
+.rcard .cnt{font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:var(--faint)}
+.diffpill{
+  align-self:flex-start; font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase;
+  padding:4px 10px; border-radius:2px; border:1px solid var(--line2); color:var(--dim);
+}
+.diffpill.hot{border-color:var(--yl-lo); color:var(--yl); background:var(--yl-soft)}
+
+/* ---------- rules card (round intro) ---------- */
+.intro{flex:1; display:flex; flex-direction:column; justify-content:center; gap:30px; padding:26px 0 10px; text-align:center; align-items:center}
+.intro .no{font-family:var(--display); font-weight:900; font-size:clamp(66px,13vw,150px); line-height:.8; color:var(--yl)}
+.intro h2{font-family:var(--display); font-weight:900; font-size:clamp(38px,7vw,80px); text-transform:uppercase; line-height:.95}
+.rulebox{
+  background:var(--panel); border:1px solid var(--line); border-top:3px solid var(--yl);
+  border-radius:3px; padding:30px 40px; max-width:760px; width:100%; text-align:left;
+}
+.rulebox ol{margin:0; padding:0; list-style:none; counter-reset:r; display:flex; flex-direction:column; gap:15px}
+.rulebox li{counter-increment:r; display:flex; gap:16px; align-items:baseline; font-size:clamp(17px,2.1vw,23px); line-height:1.4}
+.rulebox li::before{
+  content:counter(r,decimal-leading-zero); font-family:var(--mono); font-size:12px; color:var(--yl);
+  border:1px solid var(--yl-lo); padding:3px 7px; border-radius:2px; flex:none;
+}
+
+/* ---------- stage ---------- */
+.stage{flex:1; display:flex; flex-direction:column; gap:20px; padding-top:4px}
+.stagehead{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+.stagehead .dtitle{font-size:29px}
+.counter{font-family:var(--mono); font-size:12px; letter-spacing:.16em; color:var(--faint); margin-left:auto; font-variant-numeric:tabular-nums}
+.qcard{
+  background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--yl);
+  border-radius:3px; padding:44px 46px; display:flex; flex-direction:column; gap:28px;
+  min-height:250px; justify-content:center;
+}
+.qtext{font-size:clamp(26px,3.7vw,46px); line-height:1.26; font-weight:500}
+.answer{
+  font-family:var(--mono); font-size:clamp(18px,2.1vw,25px); color:var(--yl);
+  border-top:1px dashed var(--line2); padding-top:24px; animation:rise .22s ease-out;
+}
+@keyframes rise{from{opacity:0; transform:translateY(7px)} to{opacity:1; transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}
+
+.opts{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media(max-width:760px){.opts{grid-template-columns:1fr}}
+.opt{display:flex; align-items:center; gap:15px; background:var(--panel2); border:1px solid var(--line); padding:16px 19px; border-radius:2px; font-size:clamp(17px,1.9vw,21px)}
+.opt .lt{font-family:var(--mono); font-size:13px; color:var(--faint); border:1px solid var(--line2); width:27px; height:27px; display:grid; place-items:center; border-radius:2px; flex:none}
+.opt.correct{border-color:var(--yl); background:var(--yl-soft)}
+.opt.correct .lt{background:var(--yl); color:#100D00; border-color:var(--yl); font-weight:600}
+
+/* timer */
+.timerbar{display:flex; align-items:center; gap:16px}
+.clock{font-family:var(--mono); font-size:46px; font-weight:500; font-variant-numeric:tabular-nums; min-width:124px}
+.clock.warn{color:var(--yl)} .clock.out{color:#E4552B}
+.track{flex:1; height:5px; background:var(--panel2); border:1px solid var(--line); border-radius:99px; overflow:hidden}
+.fill{height:100%; background:var(--yl); width:100%; transition:width .25s linear}
+.fill.out{background:#E4552B}
+
+/* chips */
+.chips{display:flex; gap:9px; flex-wrap:wrap}
+.chip{font-family:var(--mono); font-size:12px; letter-spacing:.1em; background:var(--panel2); border:1px solid var(--line2); padding:10px 15px; border-radius:2px; color:var(--dim)}
+.chip:hover{border-color:var(--yl); color:var(--bone)}
+.chip[aria-pressed="true"]{background:var(--yl); border-color:var(--yl); color:#100D00; font-weight:600}
+
+.handicaps{display:flex; flex-direction:column; gap:10px; margin-top:14px; padding-top:16px; border-top:1px solid var(--line)}
+.chip.static{cursor:default; background:transparent; color:var(--faint); border-color:var(--line)}
+.chip.static:hover{border-color:var(--line); color:var(--faint)}
+
+/* tally */
+.tally{display:flex; gap:12px; align-items:baseline; font-family:var(--mono)}
+.tally .big{font-size:52px; color:var(--yl); font-variant-numeric:tabular-nums; line-height:1}
+
+/* footer */
+.foot{position:fixed; left:0; right:0; bottom:0; z-index:50; background:rgba(10,10,10,.95); border-top:1px solid var(--line); backdrop-filter:blur(8px)}
+.foot .inner{max-width:1200px; margin:0 auto; padding:10px 22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.keys{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--faint); margin-left:auto}
+kbd{border:1px solid var(--line2); border-bottom-width:2px; border-radius:2px; padding:1px 5px; margin:0 3px; color:var(--dim)}
+
+/* logo lockup */
+.lockup{display:flex; flex-direction:column; align-items:center; gap:10px; padding:34px 0 6px; opacity:.85}
+.lockup .by{font-family:var(--mono); font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--faint)}
+.lhlogo{height:46px; width:auto; display:block}
+.lhword{
+  font-family:var(--display); font-weight:700; font-size:26px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--bone); border:1px solid var(--line2); padding:9px 20px; border-radius:2px;
+}
+.lhword em{color:var(--yl); font-style:normal}
+.footlogo{display:flex; align-items:center; gap:9px; margin-left:14px}
+.footlogo img{height:20px; width:auto}
+.footlogo span{font-family:var(--display); font-weight:700; font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim)}
+
+.toast{position:fixed; left:50%; transform:translateX(-50%); bottom:74px; z-index:60; background:var(--panel2); border:1px solid var(--yl); font-family:var(--mono); font-size:13px; padding:11px 18px; border-radius:2px}
+@media(max-width:640px){.qcard{padding:28px 22px} .clock{font-size:34px; min-width:96px} .keys{display:none} .rulebox{padding:22px}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <button class="brand" id="brand" title="Home">
+      <span class="mark">Sucker <em>Punch</em></span>
+      <span class="sub" id="brandsub">Pub quiz</span>
+    </button>
+    <nav class="rail" id="rail"></nav>
+  </div>
+  <main id="view"></main>
+</div>
+
+<div class="foot"><div class="inner" id="foot"></div></div>
+
+<script>
+/* =========================================================================
+   QUIZ DATA — replace this object, or use "Load questions" to import a
+   JSON file of the same shape (export the current one to see it).
+   ========================================================================= */
+const DEFAULT_DATA = {
+ "title": "Sucker Punch Pub Quiz",
+ "rounds": [
+  {
+   "id": "r1",
+   "name": "Round 1",
+   "subtitle": "Movies, Games & Pop Culture",
+   "difficulty": "Easy",
+   "format": "open",
+   "rules": [
+    "20 questions x 10 points (5 if partially correct)",
+    "No wrong-answer penalty",
+    "Raise hands — first team tries, then subsequent tables"
+   ],
+   "points": {
+    "full": 10,
+    "partial": 5,
+    "wrong": 0
+   },
+   "timer": 0,
+   "questions": [
+    {
+     "q": "What hit Netflix series is also the name of Miyagi Do’s rival Dojo?",
+     "a": "Cobra Kai"
+    },
+    {
+     "q": "Name all 4 of the Teenage Mutant Ninja Turtles.",
+     "a": "Michaelangelo, Donatello, Raphael, Leonardo"
+    },
+    {
+     "q": "In Kill Bill! what colour is Uma Thurman’s iconic jumpsuit as a tribute to the legendary Bruce Lee?",
+     "a": "Yellow"
+    },
+    {
+     "q": "Which martial art did both Jean-Claude Van Damme and Akshay Kumar train in before their acting careers?",
+     "a": "Karate"
+    },
+    {
+     "q": "In Avengers, what is Thor’s weapon of choice?",
+     "a": "Hammer"
+    },
+    {
+     "q": "In The Matrix, what is the first martial art training program that Neo (Keanu Reeves) has downloaded into his brain?",
+     "a": "Kung Fu"
+    },
+    {
+     "q": "What is the iconic weapon used by the Jedi in Star Wars?",
+     "a": "Lightsaber"
+    },
+    {
+     "q": "“Eye of the Tiger” by Survivor is the theme song associated with which popular movie or franchise?",
+     "a": "Rocky /3"
+    },
+    {
+     "q": "Which anime features a young boy named Goku who trains in martial arts to fight increasingly powerful villains?",
+     "a": "Dragon Ball"
+    },
+    {
+     "q": "For the Jason Bourne movies, Matt Damon trained extensively in which martial art?",
+     "a": "Filipino Martial Arts, Kali"
+    },
+    {
+     "q": "Name the legendary 7’2” NBA player who starred in the Bruce Lee film “Game of Death”.",
+     "a": "Kareem Abdul-Jabbar"
+    },
+    {
+     "q": "In the Kung Fu Panda franchise, what’s the name of the mystical, coveted scroll everyone’s searching for, which turns out to contain… nothing but a reflective surface?",
+     "a": "The Dragon Scroll"
+    },
+    {
+     "q": "In Lord of the Rings, what is the primary weapon of Gimli the dwarf?",
+     "a": "Axe"
+    },
+    {
+     "q": "Master Oogway from Kung Fu Panda is what animal?",
+     "a": "Tortoise"
+    },
+    {
+     "q": "Complete the song lyric: “Everybody was kung fu fighting, these cats were fast as________ what?",
+     "a": "Lightning"
+    },
+    {
+     "q": "Name the fictional secret underground no holds barred tournament which Frank Dux played by Jean-Claude Van Damme wins in the movie Bloodsport.",
+     "a": "Kumite"
+    },
+    {
+     "q": "What epic finishing move does Danny LaRusso use to win the Karate championship in the original Karate Kid movie?",
+     "a": "Crane Kick"
+    },
+    {
+     "q": "Which ‘deadly’ WWE/WWF star had a cameo in Bollywood movie Khiladiyon Ka Khiladi?",
+     "a": "The Undertaker"
+    },
+    {
+     "q": "What is the name of the mythical sword that King Arthur is believed to have pulled from the stone to legitimise his claim to the throne?",
+     "a": "Excalibur"
+    },
+    {
+     "q": "Liu Kang, Scorpion, Sub Zero, Raiden, Johny Cage are all characters from which popular video game and also movie franchise?",
+     "a": "Mortal Kombat"
+    },
+    {
+     "q": "\"My name is Maximus Decimus Meridius, commander of the armies of the North, general of the Felix Legions, loyal servant to the true emperor, Marcus Aurelius. Father to a murdered son, husband to a murdered wife—and I will have my vengeance, in this life or the next.\" is a line from which 2000 movie?",
+     "a": "Gladiator"
+    },
+    {
+     "q": "The phrase “Choose your destiny…” is followed by what two words in the famous Mortal Kombat video games and movies series song?",
+     "a": "Flawless victory!"
+    }
+   ]
+  },
+  {
+   "id": "r2",
+   "name": "Round 2",
+   "subtitle": "Martial Arts Trivia",
+   "difficulty": "Medium",
+   "format": "pick",
+   "rules": [
+    "3 questions per team",
+    "Team chooses Easy or Difficult",
+    "Easy = 10 points (5 if partially correct)",
+    "Difficult = 20 points (10 if partially correct)",
+    "Wrong answer penalty",
+    "Answer correctly → nominate another team, or apply a handicap"
+   ],
+   "points": {
+    "easy": {
+     "full": 10,
+     "partial": 5,
+     "wrong": -5
+    },
+    "hard": {
+     "full": 20,
+     "partial": 10,
+     "wrong": -10
+    }
+   },
+   "timer": 30,
+   "timerShort": 15,
+   "handicaps": [
+    "Make another team answer next",
+    "Block one person from answering",
+    "Team cannot discuss",
+    "Reduced time (15s)"
+   ],
+   "easyQuestions": [
+    {
+     "q": "What martial art did Bruce Lee create?",
+     "a": "Jeet Kune Do"
+    },
+    {
+     "q": "What color belt typically signifies a beginner in most martial arts?",
+     "a": "White"
+    },
+    {
+     "q": "Karate originated in which country?",
+     "a": "Japan (Okinawa)"
+    },
+    {
+     "q": "What martial art focuses primarily on ground grappling and submissions?",
+     "a": "Brazilian Jiu-Jitsu (BJJ)"
+    },
+    {
+     "q": "What's the highest belt rank in most traditional martial arts?",
+     "a": "Black belt"
+    },
+    {
+     "q": "Which martial art uses punches, kicks, elbows, and knees, and is known as \"the art of eight limbs\"?",
+     "a": "Muay Thai"
+    },
+    {
+     "q": "Which country is Taekwondo from?",
+     "a": "Korea"
+    },
+    {
+     "q": "Which martial art was popularized in the West largely through the movie career of Bruce Lee?",
+     "a": "Kung Fu"
+    },
+    {
+     "q": "In boxing, how many rounds are in a standard professional championship fight?",
+     "a": "12"
+    },
+    {
+     "q": "What's the term in a grappling match to signal surrender?",
+     "a": "Tap out (or \"submission\")"
+    },
+    {
+     "q": "What country does Capoeira originate from?",
+     "a": "Brazil"
+    },
+    {
+     "q": "What's unique about Capoeira compared to most martial arts?",
+     "a": "Dance, music, and acrobatics"
+    },
+    {
+     "q": "What martial art is Israeli in origin and used by its military?",
+     "a": "Krav Maga"
+    },
+    {
+     "q": "Which martial art is famous for throws and joint locks, developed by Jigoro Kano?",
+     "a": "Judo"
+    },
+    {
+     "q": "What's the term for a martial arts training hall?",
+     "a": "Dojo"
+    },
+    {
+     "q": "What's the common Japanese term for a martial arts teacher?",
+     "a": "Sensei"
+    },
+    {
+     "q": "Which martial art combines wrestling, boxing, and other styles, and is used in the UFC?",
+     "a": "Mixed Martial Arts (MMA)"
+    },
+    {
+     "q": "What's the term for a fight ending because a fighter is knocked unconscious?",
+     "a": "Knockout (KO)"
+    },
+    {
+     "q": "What's the term for the bow performed at the start and end of a martial arts class?",
+     "a": "Bow (or \"rei\")"
+    },
+    {
+     "q": "Which martial art emphasizes circular movement and redirecting an opponent's force rather than opposing it directly?",
+     "a": "Aikido"
+    },
+    {
+     "q": "What's the name of the world's largest mixed martial arts organization, known by its initials?",
+     "a": "UFC"
+    },
+    {
+     "q": "What's the name of the traditional Japanese sword-fighting sport using bamboo swords and protective armor?",
+     "a": "Kendo"
+    },
+    {
+     "q": "What's the general term for a striking-based combat sport combining punches and kicks, popularized globally through K-1 competitions?",
+     "a": "Kickboxing"
+    },
+    {
+     "q": "What color belt is typically awarded just before black belt in many ranking systems, indicating advanced student status?",
+     "a": "Brown belt"
+    },
+    {
+     "q": "What's the name of the straight, thrusting kick using the front of the foot",
+     "a": "one of the most basic kicks taught in karate and taekwondo? — Front kick (Mae Geri)"
+    }
+   ],
+   "hardQuestions": [
+    {
+     "q": "What's the term for a senior student rank in many Japanese dojos?",
+     "a": "Sempai"
+    },
+    {
+     "q": "Who won UFC 1's main event in 1993, and what art did they represent?",
+     "a": "Royce Gracie, representing Brazilian Jiu-Jitsu"
+    },
+    {
+     "q": "Which grappling art was developed in Russia and heavily used by Soviet/Russian special forces, blending judo, wrestling, and other styles?",
+     "a": "Sambo"
+    },
+    {
+     "q": "What martial art was BJJ originally adapted from?",
+     "a": "Judo"
+    },
+    {
+     "q": "What's the term for the traditional belt/sash worn in Brazilian Jiu-Jitsu and Judo that indicates rank?",
+     "a": "Obi"
+    },
+    {
+     "q": "What's the term for a joint-lock submission that hyperextends the elbow, one of the most common submissions in BJJ and Judo?",
+     "a": "Armbar"
+    },
+    {
+     "q": "In Judo, what's the term for a full-point, fight-ending throw?",
+     "a": "Ippon"
+    },
+    {
+     "q": "What's the term in Japanese ranking systems for belt grades below black belt (student grades)?",
+     "a": "Kyu"
+    },
+    {
+     "q": "In BJJ competition, how many points is a full mount typically worth?",
+     "a": "4 points"
+    },
+    {
+     "q": "In grappling, what's the term for using your legs to control an opponent from underneath?",
+     "a": "Guard"
+    },
+    {
+     "q": "What's the term for the pre-fight ritual dance in Muay Thai performed to honor teachers and show respect?",
+     "a": "Wai Kru Ram Muay"
+    },
+    {
+     "q": "What's the term for a fight ending early because a competitor can't safely continue, called by the referee or their corner?",
+     "a": "TKO (technical knockout)"
+    },
+    {
+     "q": "In Brazilian Jiu-Jitsu, what's the common slang term for live, freestyle sparring practice?",
+     "a": "Rolling"
+    },
+    {
+     "q": "In Muay Thai, what's the name for the clinch position where fighters control the opponent's neck to land knee strikes?",
+     "a": "Thai clinch (or \"neck clinch\")"
+    },
+    {
+     "q": "What's the term for the weaving double-stick drills practiced in Kali, whose name literally means \"to weave\"?",
+     "a": "Sinawali"
+    },
+    {
+     "q": "What's the term for a grappling position where you control an opponent from the side, perpendicular to their body, on the ground?",
+     "a": "Side control"
+    },
+    {
+     "q": "Which ancient Greek combat sport combined boxing and wrestling with almost no rules, and was part of the ancient Olympics?",
+     "a": "Pankration"
+    },
+    {
+     "q": "What does \"judo\" translate to in English?",
+     "a": "\"The gentle way\""
+    },
+    {
+     "q": "What's the name for a formal sequence of movements practiced solo in karate or kung fu?",
+     "a": "Kata (or \"forms\")"
+    },
+    {
+     "q": "What do you call a Japanese martial arts uniform?",
+     "a": "Gi (or \"dobok\" in Taekwondo)"
+    },
+    {
+     "q": "What martial art literally translates to \"way of the foot and fist\"?",
+     "a": "Taekwondo"
+    },
+    {
+     "q": "What weapon is most associated with traditional Filipino Kali/Eskrima training?",
+     "a": "Sticks (escrima sticks)"
+    },
+    {
+     "q": "Which martial art is known for its close-range trapping and use of a wooden training dummy?",
+     "a": "Wing Chun"
+    },
+    {
+     "q": "Which martial art was banned in Brazil in the early 20th century for its association with resistance and Afro-Brazilian culture, before being legalized decades later?",
+     "a": "Capoeira"
+    },
+    {
+     "q": "What's the name of the ancient Indian martial art, considered one of the oldest fighting systems in the world, traditionally practiced in Kerala and incorporating oil massage into training?",
+     "a": "Kalaripayattu"
+    }
+   ]
+  },
+  {
+   "id": "r3",
+   "name": "Round 3",
+   "subtitle": "Shaolin Squat",
+   "difficulty": "Medium",
+   "format": "rapid",
+   "rules": [
+    "Nominate one person per team",
+    "Answer as many questions as possible in ONE minute",
+    "All while holding the Shaolin squat"
+   ],
+   "points": {
+    "perCorrect": 10
+   },
+   "timer": 60,
+   "questions": [
+    {
+     "q": "What's the capital of Australia?",
+     "a": "Canberra"
+    },
+    {
+     "q": "How many continents are there?",
+     "a": "7"
+    },
+    {
+     "q": "What's the largest planet in our solar system?",
+     "a": "Jupiter"
+    },
+    {
+     "q": "What's the national sport of Japan?",
+     "a": "Sumo wrestling"
+    },
+    {
+     "q": "How many strings does a standard guitar have?",
+     "a": "6"
+    },
+    {
+     "q": "What's the currency of Japan?",
+     "a": "Yen"
+    },
+    {
+     "q": "Who painted the Mona Lisa?",
+     "a": "Leonardo da Vinci"
+    },
+    {
+     "q": "What's the tallest mountain in the world?",
+     "a": "Mount Everest"
+    },
+    {
+     "q": "How many players are on a football (soccer) team on the field?",
+     "a": "11"
+    },
+    {
+     "q": "What's the chemical symbol for gold?",
+     "a": "Au"
+    },
+    {
+     "q": "Which ocean is the largest?",
+     "a": "Pacific Ocean"
+    },
+    {
+     "q": "What's the fastest land animal?",
+     "a": "Cheetah"
+    },
+    {
+     "q": "How many hearts does an octopus have?",
+     "a": "3"
+    },
+    {
+     "q": "What's the smallest country in the world?",
+     "a": "Vatican City"
+    },
+    {
+     "q": "Who wrote Romeo and Juliet?",
+     "a": "Shakespeare"
+    },
+    {
+     "q": "What's the hardest natural substance on Earth?",
+     "a": "Diamond"
+    },
+    {
+     "q": "How many bones are in the adult human body?",
+     "a": "206"
+    },
+    {
+     "q": "What's the capital of Canada?",
+     "a": "Ottawa"
+    },
+    {
+     "q": "Which planet is known as the Red Planet?",
+     "a": "Mars"
+    },
+    {
+     "q": "How many colors are in a rainbow?",
+     "a": "7"
+    },
+    {
+     "q": "Which river carries the most water (by volume) of any river in the world?",
+     "a": "Amazon"
+    },
+    {
+     "q": "Which country invented pizza?",
+     "a": "Italy"
+    },
+    {
+     "q": "What's the main language spoken in Brazil?",
+     "a": "Portuguese"
+    },
+    {
+     "q": "How many time zones does Russia span?",
+     "a": "11"
+    },
+    {
+     "q": "What's the freezing point of water in Celsius?",
+     "a": "0°C"
+    },
+    {
+     "q": "Which animal is known as the King of the Jungle?",
+     "a": "Lion"
+    },
+    {
+     "q": "What's the currency used in the UK?",
+     "a": "Pound sterling"
+    },
+    {
+     "q": "How many sides does a hexagon have?",
+     "a": "6"
+    },
+    {
+     "q": "What's the largest hot desert in the world?",
+     "a": "Sahara"
+    },
+    {
+     "q": "Who was the first person to walk on the moon?",
+     "a": "Neil Armstrong"
+    },
+    {
+     "q": "What's the capital of India?",
+     "a": "New Delhi"
+    },
+    {
+     "q": "How many legs does a spider have?",
+     "a": "8"
+    },
+    {
+     "q": "What gas do plants primarily absorb from the atmosphere?",
+     "a": "Carbon dioxide"
+    },
+    {
+     "q": "What's the tallest animal in the world?",
+     "a": "Giraffe"
+    },
+    {
+     "q": "What is the state animal of Goa?",
+     "a": "Gaur (Indian bison)"
+    },
+    {
+     "q": "How many minutes are in a full day?",
+     "a": "1,440"
+    },
+    {
+     "q": "What's the largest mammal in the world?",
+     "a": "Blue whale"
+    },
+    {
+     "q": "Which country has the largest land area in the world?",
+     "a": "Russia"
+    },
+    {
+     "q": "What's the boiling point of water in Celsius?",
+     "a": "100°C"
+    },
+    {
+     "q": "How many Olympic rings are there?",
+     "a": "5"
+    },
+    {
+     "q": "What's the capital of Egypt?",
+     "a": "Cairo"
+    },
+    {
+     "q": "What is the capital of Goa?",
+     "a": "Panaji (Panjim)"
+    },
+    {
+     "q": "What's the smallest planet in our solar system?",
+     "a": "Mercury"
+    },
+    {
+     "q": "How many teeth does an adult human typically have?",
+     "a": "32"
+    },
+    {
+     "q": "What's the most spoken language in the world by native speakers?",
+     "a": "Mandarin Chinese"
+    },
+    {
+     "q": "Which country is home to the kangaroo?",
+     "a": "Australia"
+    },
+    {
+     "q": "Which is the longest river in Goa?",
+     "a": "Zuari"
+    },
+    {
+     "q": "How many players are on a basketball team on the court?",
+     "a": "5"
+    },
+    {
+     "q": "What's the largest organ in the human body?",
+     "a": "Skin"
+    },
+    {
+     "q": "Which planet is famous for its dramatic ring system?",
+     "a": "Saturn"
+    },
+    {
+     "q": "What's the capital of France?",
+     "a": "Paris"
+    },
+    {
+     "q": "How many sides does a triangle have?",
+     "a": "3"
+    },
+    {
+     "q": "What's the chemical symbol for water?",
+     "a": "H2O"
+    },
+    {
+     "q": "Who wrote the Harry Potter series?",
+     "a": "J.K. Rowling"
+    },
+    {
+     "q": "What is the state bird of Goa?",
+     "a": "Flame-throated Bulbul (Ruby-throated Yellow Bulbul)"
+    },
+    {
+     "q": "What is the atomic number of hydrogen?",
+     "a": "1"
+    },
+    {
+     "q": "Which country is famous for the Eiffel Tower?",
+     "a": "France"
+    },
+    {
+     "q": "What is Goa's official state language?",
+     "a": "Konkani"
+    },
+    {
+     "q": "What's the name of the first man-made satellite launched into space?",
+     "a": "Sputnik"
+    },
+    {
+     "q": "Which gas makes up most of Earth's atmosphere?",
+     "a": "Nitrogen"
+    },
+    {
+     "q": "What's the capital of Italy?",
+     "a": "Rome"
+    },
+    {
+     "q": "How many strings does a violin have?",
+     "a": "4"
+    },
+    {
+     "q": "Who developed the theory of relativity?",
+     "a": "Albert Einstein"
+    },
+    {
+     "q": "What's the smallest bone in the human body?",
+     "a": "Stapes (in the ear)"
+    },
+    {
+     "q": "Which country is the Great Wall located in?",
+     "a": "China"
+    },
+    {
+     "q": "What's the capital of Spain?",
+     "a": "Madrid"
+    },
+    {
+     "q": "How many wheels does a standard bicycle have?",
+     "a": "2"
+    },
+    {
+     "q": "What's the largest species of shark?",
+     "a": "Whale shark"
+    },
+    {
+     "q": "Which former European colonial power ruled Goa before 1961?",
+     "a": "Portugal"
+    },
+    {
+     "q": "What's the study of earthquakes called?",
+     "a": "Seismology"
+    },
+    {
+     "q": "How many keys are on a standard piano?",
+     "a": "88"
+    },
+    {
+     "q": "What's the capital of Germany?",
+     "a": "Berlin"
+    },
+    {
+     "q": "Which vitamin is produced when skin is exposed to sunlight?",
+     "a": "Vitamin D"
+    },
+    {
+     "q": "What's the largest continent by area?",
+     "a": "Asia"
+    },
+    {
+     "q": "How many players are on a volleyball team on the court?",
+     "a": "6"
+    },
+    {
+     "q": "What's the process by which plants make food using sunlight called?",
+     "a": "Photosynthesis"
+    },
+    {
+     "q": "Which country is famous for originating sushi?",
+     "a": "Japan"
+    },
+    {
+     "q": "What's the capital of Russia?",
+     "a": "Moscow"
+    },
+    {
+     "q": "How many degrees are in a right angle?",
+     "a": "90"
+    },
+    {
+     "q": "What's the term for a baby kangaroo called?",
+     "a": "Joey"
+    },
+    {
+     "q": "Which explorer is credited with reaching the Americas in 1492?",
+     "a": "Christopher Columbus"
+    },
+    {
+     "q": "What's the chemical symbol for sodium?",
+     "a": "Na"
+    },
+    {
+     "q": "How many legs does an insect have?",
+     "a": "6"
+    },
+    {
+     "q": "What's the largest internal organ in the human body?",
+     "a": "Liver"
+    },
+    {
+     "q": "Which country has the maple leaf on its flag?",
+     "a": "Canada"
+    },
+    {
+     "q": "What's the speed of light approximately, in km per second?",
+     "a": "~300,000 km/s"
+    },
+    {
+     "q": "How many bones are in the human hand (including wrist)?",
+     "a": "27"
+    },
+    {
+     "q": "What's the capital of South Korea?",
+     "a": "Seoul"
+    },
+    {
+     "q": "Which instrument measures atmospheric pressure?",
+     "a": "Barometer"
+    },
+    {
+     "q": "What's the tallest waterfall in the world?",
+     "a": "Angel Falls (Venezuela)"
+    },
+    {
+     "q": "How many minutes are in an hour?",
+     "a": "60"
+    },
+    {
+     "q": "What's the study of fossils called?",
+     "a": "Paleontology"
+    },
+    {
+     "q": "What is the name of Goa's popular local spirit distilled from cashew or coconut?",
+     "a": "Feni"
+    },
+    {
+     "q": "What's the capital of Portugal?",
+     "a": "Lisbon"
+    },
+    {
+     "q": "How many rings are there on the Olympic flag?",
+     "a": "5"
+    },
+    {
+     "q": "What's the largest island in the world (excluding continental landmasses)?",
+     "a": "Greenland"
+    },
+    {
+     "q": "Which planet rotates almost on its side, tilted nearly perpendicular to its orbit?",
+     "a": "Uranus"
+    },
+    {
+     "q": "What's the term for an animal that eats both plants and meat?",
+     "a": "Omnivore"
+    },
+    {
+     "q": "How many sides does an octagon have?",
+     "a": "8"
+    },
+    {
+     "q": "What's the capital of Thailand?",
+     "a": "Bangkok"
+    },
+    {
+     "q": "Which scientist proposed the theory of evolution by natural selection?",
+     "a": "Charles Darwin"
+    },
+    {
+     "q": "Which is the only bone in the human body not connected to any other bone?",
+     "a": "Hyoid bone"
+    },
+    {
+     "q": "How many teeth does a shark lose and regrow over a lifetime, roughly speaking",
+     "a": "thousands or just a few dozen? — Thousands"
+    },
+    {
+     "q": "What's the capital of Greece?",
+     "a": "Athens"
+    },
+    {
+     "q": "In what year was Goa liberated and became part of India?",
+     "a": "1961"
+    },
+    {
+     "q": "How many players are on a cricket team?",
+     "a": "11"
+    },
+    {
+     "q": "What's the term for a group of lions called?",
+     "a": "Pride"
+    },
+    {
+     "q": "Which country is home to the Amazon Rainforest (largest share)?",
+     "a": "Brazil"
+    },
+    {
+     "q": "What's the boiling point of water in Fahrenheit?",
+     "a": "212°F"
+    },
+    {
+     "q": "What's the second-largest ocean in the world?",
+     "a": "Atlantic Ocean"
+    },
+    {
+     "q": "What's the capital of the Netherlands?",
+     "a": "Amsterdam"
+    },
+    {
+     "q": "Which organ pumps blood through the human body?",
+     "a": "Heart"
+    },
+    {
+     "q": "What's the term for the study of stars and space?",
+     "a": "Astronomy"
+    },
+    {
+     "q": "How many sides does a pentagon have?",
+     "a": "5"
+    },
+    {
+     "q": "What's the largest species of big cat?",
+     "a": "Tiger"
+    },
+    {
+     "q": "What is India's national bird?",
+     "a": "Indian peafowl (peacock)"
+    },
+    {
+     "q": "What's the capital of Switzerland?",
+     "a": "Bern"
+    },
+    {
+     "q": "How many chambers does the human heart have?",
+     "a": "4"
+    },
+    {
+     "q": "What's the term for a young cow called?",
+     "a": "Calf"
+    },
+    {
+     "q": "What is India's national river?",
+     "a": "Ganga (Ganges)"
+    },
+    {
+     "q": "What's the largest bone in the human body?",
+     "a": "Femur"
+    },
+    {
+     "q": "How many degrees are in a full circle?",
+     "a": "360"
+    },
+    {
+     "q": "What's the capital of Austria?",
+     "a": "Vienna"
+    },
+    {
+     "q": "Which vitamin deficiency causes scurvy?",
+     "a": "Vitamin C"
+    },
+    {
+     "q": "What's the term for animals active mainly at night?",
+     "a": "Nocturnal"
+    },
+    {
+     "q": "How many wings does a bee have?",
+     "a": "4"
+    },
+    {
+     "q": "What's the capital of Turkey?",
+     "a": "Ankara"
+    },
+    {
+     "q": "Which explorer led the first circumnavigation of the globe (though he died partway through)?",
+     "a": "Ferdinand Magellan"
+    },
+    {
+     "q": "What's the smallest unit of life called?",
+     "a": "Cell"
+    },
+    {
+     "q": "How many strings does a standard harp typically have (+-3 accepted)?",
+     "a": "~47 (accept 44–50)"
+    },
+    {
+     "q": "What's the capital of Poland?",
+     "a": "Warsaw"
+    },
+    {
+     "q": "Which gas is used in balloons to make them float?",
+     "a": "Helium"
+    },
+    {
+     "q": "What's the term for the imaginary line around the middle of the Earth?",
+     "a": "Equator"
+    },
+    {
+     "q": "How many bones does a shark's skeleton contain?",
+     "a": "Zero. It’s cartilage, not bone"
+    },
+    {
+     "q": "What's the capital of Vietnam?",
+     "a": "Hanoi"
+    },
+    {
+     "q": "Which planet is often called Earth's \"twin\" due to similar size?",
+     "a": "Venus"
+    },
+    {
+     "q": "What's the term for a fear of heights?",
+     "a": "Acrophobia"
+    },
+    {
+     "q": "How many legs does a lobster have?",
+     "a": "10"
+    },
+    {
+     "q": "What's the capital of Indonesia?",
+     "a": "Jakarta"
+    },
+    {
+     "q": "Which scientist is credited with discovering gravity via a falling apple (as the popular story goes)?",
+     "a": "Isaac Newton"
+    },
+    {
+     "q": "What's the term for the outer layer of the Earth called?",
+     "a": "Crust"
+    },
+    {
+     "q": "What's the largest artery in the human body?",
+     "a": "Aorta"
+    },
+    {
+     "q": "What's the capital of Malaysia?",
+     "a": "Kuala Lumpur"
+    },
+    {
+     "q": "Which bird is known for its inability to fly but is famous for running fast?",
+     "a": "Ostrich"
+    },
+    {
+     "q": "What's the term for a shape with 10 sides called?",
+     "a": "Decagon"
+    },
+    {
+     "q": "Which is the smallest ocean in the world?",
+     "a": "Arctic Ocean"
+    },
+    {
+     "q": "What's the capital of Argentina?",
+     "a": "Buenos Aires"
+    },
+    {
+     "q": "Which planet takes the longest to orbit the sun?",
+     "a": "Neptune"
+    },
+    {
+     "q": "What's the term for the transition of a solid directly into a gas, skipping liquid?",
+     "a": "Sublimation"
+    },
+    {
+     "q": "What's the capital of Kenya?",
+     "a": "Nairobi"
+    }
+   ]
+  },
+  {
+   "id": "r4",
+   "name": "Round 4",
+   "subtitle": "Epic Wars",
+   "difficulty": "Hard",
+   "format": "mcq",
+   "rules": [
+    "Multiple choice questions",
+    "Raise hand to wager 5 to 50 points",
+    "Correct = win the wager, wrong = lose it",
+    "If multiple teams bid 50: pushups / squats to resolve"
+   ],
+   "timer": 0,
+   "questions": [
+    {
+     "q": "Where is the Oldest Depiction of a Martial Art Found?",
+     "options": [
+      "Egypt",
+      "Turkey",
+      "Greece",
+      "India"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "The Battle of Sekigahara in 1600 paved the way for which man to become Japan's dominant ruler?",
+     "options": [
+      "Oda Nobunaga",
+      "Toyotomi Hideyoshi",
+      "Tokugawa Ieyasu",
+      "Takeda Shingen"
+     ],
+     "correct": 2
+    },
+    {
+     "q": "Which martial-art/ system did  Bruce Lee first train in?",
+     "options": [
+      "Wing Chun",
+      "7 Star Praying Mantis",
+      "Shaolin Kung Fu",
+      "Hung Gar"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "Which Indian martial art is traditionally associated with the Meitei people of Manipur and incorporates sword and spear fighting?",
+     "options": [
+      "Silambam",
+      "Paika",
+      "Thang-Ta",
+      "Karra Samu"
+     ],
+     "correct": 2
+    },
+    {
+     "q": "Pankration, which combined striking and grappling, originated in which ancient civilization?",
+     "options": [
+      "Roman",
+      "Persian",
+      "Greek",
+      "Egyptian"
+     ],
+     "correct": 2
+    },
+    {
+     "q": "What kind of weapon was the German Zweihänder?",
+     "options": [
+      "Two-handed sword",
+      "Poleaxe",
+      "War hammer",
+      "Crossbow"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "Which Roman general defeated Hannibal at the Battle of Zama in 202 BCE?",
+     "options": [
+      "Pompey",
+      "Scipio Africanus",
+      "Marcus Aurelius",
+      "Crassus"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "What was the name of Maharana Pratap's famous horse?",
+     "options": [
+      "Badal",
+      "Chetak",
+      "Pavan",
+      "Bijli"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "The famous Battle of Agincourt in 1415 was fought during which conflict?",
+     "options": [
+      "Wars of the Roses",
+      "Hundred Years' War",
+      "Thirty Years' War",
+      "English Civil War"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "Which legendary Shaolin-associated figure is traditionally credited with bringing Chan/Zen Buddhism to China?",
+     "options": [
+      "Da Mo",
+      "Sun Tzu",
+      "Guan Yu",
+      "Laozi"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "Which 1761 battle resulted in a catastrophic defeat for the Maratha Confederacy against Ahmad Shah Durrani?",
+     "options": [
+      "Battle of Plassey",
+      "Third Battle of Panipat",
+      "Battle of Buxar",
+      "Battle of Talikota"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "Which battle in 52 BCE saw Julius Caesar defeat the Gallic leader Vercingetorix?",
+     "options": [
+      "Philippi",
+      "Alesia",
+      "Actium",
+      "Carrhae"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "Which legendary Chinese general was later deified and became widely revered as a symbol of loyalty and martial virtue?",
+     "options": [
+      "Guan Yu",
+      "Sun Tzu",
+      "Yue Fei",
+      "Zhang Fei"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "Which battle in 1757 helped establish the British East India Company's political dominance in Bengal?",
+     "options": [
+      "Buxar",
+      "Plassey",
+      "Assaye",
+      "Arcot"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "At the Battle of Carrhae in 53 BCE, which Roman commander suffered a disastrous defeat against the Parthians?",
+     "options": [
+      "Crassus",
+      "Pompey",
+      "Mark Antony",
+      "Germanicus"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "Shaka is most closely associated with the rise of which African kingdom?",
+     "options": [
+      "Mali",
+      "Zulu",
+      "Aksum",
+      "Songhai"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "In the Rigveda's account of the Battle of the Ten Kings, which king emerges victorious over the opposing coalition?",
+     "options": [
+      "Bharata",
+      "Sudas",
+      "Divodasa",
+      "Janamejaya"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "The Wars of the Roses were primarily fought between which two rival branches of the Plantagenet dynasty?",
+     "options": [
+      "York and Lancaster",
+      "Tudor and Stuart",
+      "Lancaster and Windsor",
+      "York and Normandy"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "Which commander was defeated by the alliance of Sun Quan and Liu Bei at the famous Battle of Red Cliffs?",
+     "options": [
+      "Lü Bu",
+      "Cao Cao",
+      "Yuan Shao",
+      "Ma Chao"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "Which battle is traditionally associated with a major victory by the Britons over the Anglo-Saxons and was later connected with King Arthur?",
+     "options": [
+      "Mount Badon",
+      "Bosworth Field",
+      "Stamford Bridge",
+      "Brunanburh"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "Which pope famously met Attila the Hun in 452 CE during Attila's invasion of Italy?",
+     "options": [
+      "Leo I",
+      "Gregory I",
+      "Urban II",
+      "Leo III"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "In some retellings of Arthurian legend, what name is given to sword King Arthur Draws from the Stone?",
+     "options": [
+      "Durandal",
+      "Caliburn",
+      "Joyeuse",
+      "Excalibur"
+     ],
+     "correct": 1
+    }
+   ]
+  }
+ ]
+};
+
+/* Lighthaven India logo. Paste a data: URI (or a URL) here to swap it in;
+   if empty, a typographic wordmark is used instead. */
+const LOGO_SRC = "";
+
+const S = {
+  data: JSON.parse(JSON.stringify(DEFAULT_DATA)),
+  screen: 'home',           // home | intro | round
+  ri: 0,
+  r1: {i:0, revealed:false},
+  r2: {tier:'easy', q:null, revealed:false, used:{easy:[],hard:[]}, started:false},
+  r3: {phase:'ready', q:null, used:[], count:0, seen:0, revealed:false},
+  r4: {i:0, revealed:false},
+  t: {total:0, left:0, on:false, id:null}
+};
+const $ = s => document.querySelector(s);
+const el = (t,c,h)=>{const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const R = () => S.data.rounds[S.ri];
+const qcount = r => (r.questions?r.questions.length:0) + (r.easyQuestions?r.easyQuestions.length+r.hardQuestions.length:0);
+
+/* ---------- persistence (best effort) ---------- */
+const KEY='sucker-punch-quiz-v1';
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify({data:S.data,screen:S.screen,ri:S.ri,r1:S.r1,r2:S.r2,r3:S.r3,r4:S.r4})); }catch(e){} }
+function load(){ try{ const r=localStorage.getItem(KEY); return r?JSON.parse(r):null; }catch(e){ return null; } }
+function wipe(){ try{ localStorage.removeItem(KEY); }catch(e){} }
+
+let toastT;
+function toast(msg){
+  const old=$('.toast'); if(old) old.remove();
+  const n=el('div','toast',esc(msg)); document.body.appendChild(n);
+  clearTimeout(toastT); toastT=setTimeout(()=>n.remove(),2200);
+}
+
+/* ---------- timer ---------- */
+function timerSet(sec){ stopTimer(); S.t.total=sec||0; S.t.left=sec||0; paintClock(); }
+function startTimer(){
+  if(S.t.on || S.t.left<=0) return;
+  S.t.on=true;
+  S.t.id=setInterval(()=>{ S.t.left--; paintClock(); if(S.t.left<=0){ stopTimer(); timeUp(); } },1000);
+  paintClock();
+}
+function stopTimer(){ S.t.on=false; clearInterval(S.t.id); S.t.id=null; paintClock(); }
+function toggleTimer(){ S.t.on?stopTimer():startTimer(); }
+function timeUp(){
+  toast('Time!'); try{ beep(); }catch(e){}
+  if(R() && R().format==='rapid' && S.r3.phase==='run'){ S.r3.phase='done'; render(); }
+}
+function beep(){
+  const C=window.AudioContext||window.webkitAudioContext; if(!C) return;
+  const a=new C(), o=a.createOscillator(), g=a.createGain();
+  o.connect(g); g.connect(a.destination); o.type='square'; o.frequency.value=640;
+  g.gain.setValueAtTime(.15,a.currentTime); g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.75);
+  o.start(); o.stop(a.currentTime+.78);
+}
+function paintClock(){
+  const c=$('#clock'); if(!c) return;
+  const m=Math.floor(S.t.left/60), s=S.t.left%60;
+  c.textContent=`${m}:${String(s).padStart(2,'0')}`;
+  const frac=S.t.total? S.t.left/S.t.total : 0;
+  const cls = S.t.left<=0?'out':(frac<=.25?'warn':'');
+  c.className='clock '+cls;
+  const f=$('#fill'); if(f){ f.style.width=(frac*100)+'%'; f.className='fill '+cls; }
+  const b=$('#tbtn'); if(b) b.textContent=S.t.on?'Pause':'Start';
+}
+function timerBar(){
+  return `<div class="timerbar">
+    <div class="clock" id="clock">0:00</div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <button class="btn sm" id="tbtn">Start</button>
+    <button class="btn sm ghost" id="trst">Reset</button></div>`;
+}
+function wireTimer(){
+  const b=$('#tbtn'); if(b) b.onclick=toggleTimer;
+  const r=$('#trst'); if(r) r.onclick=()=>timerSet(S.t.total);
+  paintClock();
+}
+function pickRandom(pool, used){
+  const free=pool.map((_,i)=>i).filter(i=>!used.includes(i));
+  return free.length? free[Math.floor(Math.random()*free.length)] : null;
+}
+function logoNode(size){
+  if(LOGO_SRC && LOGO_SRC.indexOf('__')!==0){
+    const i=el('img', size==='small'?'':'lhlogo'); i.src=LOGO_SRC; i.alt='Lighthaven India';
+    if(size==='small') i.style.height='20px';
+    return i;
+  }
+  return el('div', size==='small'?'':'lhword', size==='small'
+    ? '<span>Lighthaven India</span>' : 'Light<em>haven</em> India');
+}
+
+/* ---------- render ---------- */
+function render(){
+  renderRail(); renderFoot();
+  const v=$('#view'); v.innerHTML='';
+  if(S.screen==='home') v.appendChild(viewHome());
+  else if(S.screen==='intro') v.appendChild(viewIntro());
+  else v.appendChild(viewRound());
+  $('#brandsub').textContent = S.screen==='home' ? 'Pub quiz' : R().subtitle;
+  wireTimer(); save();
+}
+function renderRail(){
+  const rail=$('#rail'); rail.innerHTML='';
+  S.data.rounds.forEach((r,i)=>{
+    const b=el('button','rchip', r.name.replace('Round ','R'));
+    b.title=r.subtitle;
+    if(S.screen!=='home' && S.ri===i) b.setAttribute('aria-current','true');
+    b.onclick=()=>openRound(i);
+    rail.appendChild(b);
+  });
+}
+function renderFoot(){
+  const f=$('#foot'); f.innerHTML='';
+  const add=(l,c,fn)=>{const b=el('button','btn sm '+(c||''),l); b.onclick=fn; f.appendChild(b);};
+  if(S.screen!=='home') add('Home','ghost',()=>{ S.screen='home'; stopTimer(); render(); });
+  if(S.screen==='round') add('Round rules','ghost',()=>{ S.screen='intro'; stopTimer(); render(); });
+  add('Load questions','ghost',importJSON);
+  add('Export questions','ghost',exportJSON);
+  add('Start over','ghost',()=>{ if(confirm('Clear all progress through the questions?')){ wipe(); location.reload(); } });
+  const lk=el('div','footlogo'); lk.appendChild(logoNode('small')); f.appendChild(lk);
+  f.appendChild(el('div','keys','<kbd>Space</kbd>reveal <kbd>&rarr;</kbd>next <kbd>T</kbd>timer'));
+}
+
+/* ---------- home ---------- */
+function viewHome(){
+  const w=el('div','stack');
+  w.appendChild(el('div','hero',`
+    <div class="kick">Four rounds &middot; ${S.data.rounds.reduce((n,r)=>n+qcount(r),0)} questions</div>
+    <h1 class="dtitle">Sucker <em>Punch</em><span style="display:block;font-size:.42em;letter-spacing:.12em;margin-top:.25em">Pub Quiz</span></h1>
+    <p class="tag">Movies, martial arts, a one-minute squat, and epic wars.</p>`));
+  const g=el('div','roundgrid');
+  S.data.rounds.forEach((r,i)=>{
+    const c=el('button','rcard');
+    c.innerHTML=`<div class="no">${String(i+1).padStart(2,'0')}</div>
+      <span class="diffpill${r.difficulty==='Hard'?' hot':''}">${esc(r.difficulty)}</span>
+      <h3>${esc(r.subtitle)}</h3>
+      <div class="cnt">${qcount(r)} questions</div>`;
+    c.onclick=()=>openRound(i);
+    g.appendChild(c);
+  });
+  w.appendChild(g);
+  const lk=el('div','lockup');
+  lk.appendChild(el('div','by','Brought to you by'));
+  lk.appendChild(logoNode());
+  w.appendChild(lk);
+  return w;
+}
+
+/* ---------- round intro (rules + start) ---------- */
+function openRound(i){ S.ri=i; S.screen='intro'; stopTimer(); render(); }
+function viewIntro(){
+  const r=R(), w=el('div','intro');
+  w.appendChild(el('div','no', String(S.ri+1).padStart(2,'0')));
+  w.appendChild(el('div','eyebrow', `${esc(r.name)} &middot; ${esc(r.difficulty)}`));
+  const h=el('h2',null, esc(r.subtitle)); w.appendChild(h);
+  const box=el('div','rulebox', `<ol>${r.rules.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`);
+  w.appendChild(box);
+  const b=el('button','btn primary huge','Start the round');
+  b.onclick=()=>startRound();
+  w.appendChild(b);
+  return w;
+}
+function startRound(){
+  const r=R();
+  if(r.format==='open'){ S.r1.revealed=false; }
+  if(r.format==='pick'){ S.r2.started=false; S.r2.revealed=false; }
+  if(r.format==='rapid'){ S.r3.phase='ready'; S.r3.count=0; S.r3.seen=0; S.r3.revealed=false; }
+  if(r.format==='mcq'){ S.r4.revealed=false; }
+  timerSet(r.timer||0);
+  S.screen='round'; render();
+}
+
+/* ---------- round shell ---------- */
+function viewRound(){
+  const r=R(), w=el('div','stage');
+  w.appendChild(el('div','stagehead',
+    `<span class="diffpill${r.difficulty==='Hard'?' hot':''}">${esc(r.difficulty)}</span>
+     <h2 class="dtitle">${esc(r.subtitle)}</h2><span class="counter" id="counter"></span>`));
+  if(r.format==='open') w.appendChild(roundOpen(r));
+  else if(r.format==='pick') w.appendChild(roundPick(r));
+  else if(r.format==='rapid') w.appendChild(roundRapid(r));
+  else if(r.format==='mcq') w.appendChild(roundMCQ(r));
+  return w;
+}
+const setCounter = t => { const c=$('#counter'); if(c) c.textContent=t; };
+
+/* ---------- R1: sequential, no timer ---------- */
+function roundOpen(r){
+  const st=S.r1, q=r.questions[st.i], w=el('div','stack');
+  setTimeout(()=>setCounter(`${st.i+1} / ${r.questions.length}`),0);
+  w.appendChild(el('div','qcard',
+    `<div class="qtext">${esc(q.q)}</div>${st.revealed?`<div class="answer">${esc(q.a)}</div>`:''}`));
+  const bar=el('div','bar');
+  const rev=el('button','btn primary big', st.revealed?'Hide answer':'Reveal answer');
+  rev.onclick=()=>{ st.revealed=!st.revealed; render(); };
+  const prev=el('button','btn','&larr; Prev'); prev.disabled=st.i===0; prev.onclick=()=>go(-1);
+  const next=el('button','btn','Next &rarr;'); next.disabled=st.i>=r.questions.length-1; next.onclick=()=>go(1);
+  bar.append(rev,prev,next);
+  w.appendChild(bar);
+  function go(d){ st.i=Math.max(0,Math.min(r.questions.length-1,st.i+d)); st.revealed=false; render(); }
+  return w;
+}
+
+/* ---------- R2: choose easy or difficult, random draw ---------- */
+function roundPick(r){
+  const st=S.r2, w=el('div','stack');
+  const left = k => (k==='easy'?r.easyQuestions.length:r.hardQuestions.length) - st.used[k].length;
+
+  if(!st.started){
+    setTimeout(()=>setCounter(`Easy ${left('easy')} left · Difficult ${left('hard')} left`),0);
+    w.appendChild(el('div','eyebrow','The team chooses'));
+    const c=el('div','chips');
+    [['easy',`Easy &middot; ${r.points.easy.full} pts`],['hard',`Difficult &middot; ${r.points.hard.full} pts`]].forEach(([k,lab])=>{
+      const b=el('button','chip',lab); b.setAttribute('aria-pressed', st.tier===k);
+      b.onclick=()=>{ st.tier=k; render(); }; c.appendChild(b);
+    });
+    w.appendChild(c);
+    const bar=el('div','bar');
+    const go=el('button','btn primary big','Draw a question');
+    go.onclick=()=>{
+      const pool = st.tier==='easy'?r.easyQuestions:r.hardQuestions;
+      const i = pickRandom(pool, st.used[st.tier]);
+      if(i===null){ toast('No unused questions left in that tier'); return; }
+      st.used[st.tier].push(i); st.q=i; st.started=true; st.revealed=false;
+      timerSet(r.timer); render(); startTimer();
+    };
+    bar.appendChild(go);
+    w.appendChild(bar);
+    return w;
+  }
+
+  const pool = st.tier==='easy'?r.easyQuestions:r.hardQuestions;
+  const q = pool[st.q];
+  setTimeout(()=>setCounter(`${st.tier==='easy'?'Easy':'Difficult'} · ${r.points[st.tier].full} pts`),0);
+  w.appendChild(el('div','qcard',
+    `<div class="qtext">${esc(q.q)}</div>${st.revealed?`<div class="answer">${esc(q.a)}</div>`:''}`));
+  w.insertAdjacentHTML('beforeend', timerBar());
+  const bar=el('div','bar');
+  const rev=el('button','btn primary big', st.revealed?'Hide answer':'Reveal answer');
+  rev.onclick=()=>{ st.revealed=!st.revealed; stopTimer(); render(); };
+  const nxt=el('button','btn big','Next question &rarr;');
+  nxt.onclick=()=>{ st.started=false; st.revealed=false; stopTimer(); render(); };
+  const short=el('button','btn ghost','Restart at 15s');
+  short.onclick=()=>{ timerSet(r.timerShort); startTimer(); };
+  bar.append(rev,nxt,short);
+  w.appendChild(bar);
+  if(r.handicaps && r.handicaps.length){
+    const h=el('div','handicaps');
+    h.innerHTML=`<span class="eyebrow">Handicaps on the table</span>
+      <div class="chips">${r.handicaps.map(x=>`<span class="chip static">${esc(x)}</span>`).join('')}</div>`;
+    w.appendChild(h);
+  }
+  return w;
+}
+
+/* ---------- R3: one-minute rapid fire ---------- */
+function roundRapid(r){
+  const st=S.r3, w=el('div','stack');
+
+  if(st.phase==='ready'){
+    setTimeout(()=>setCounter(`${r.questions.length-st.used.length} questions unused`),0);
+    w.appendChild(el('div','qcard',
+      `<div class="eyebrow">Nominate the squatter</div>
+       <div class="qtext">One minute. As many as they can take.</div>
+       <div class="note">${r.questions.length-st.used.length} questions still unused &middot; no question repeats between teams</div>`));
+    const bar=el('div','bar');
+    const go=el('button','btn primary huge','Start 60 seconds');
+    go.onclick=()=>{ st.phase='run'; st.count=0; st.seen=0; nextRapid(); timerSet(r.timer); render(); startTimer(); };
+    bar.appendChild(go); w.appendChild(bar);
+    return w;
+  }
+
+  if(st.phase==='run'){
+    const q=r.questions[st.q];
+    setTimeout(()=>setCounter(`${st.count} correct · ${st.seen} asked`),0);
+    w.appendChild(el('div','qcard',
+      `<div class="qtext">${esc(q.q)}</div>${st.revealed?`<div class="answer">${esc(q.a)}</div>`:''}`));
+    w.insertAdjacentHTML('beforeend', timerBar());
+    const bar=el('div','bar');
+    const ok=el('button','btn primary big','Correct &rarr;');
+    ok.onclick=()=>{ st.count++; st.seen++; st.revealed=false; nextRapid(); render(); };
+    const pass=el('button','btn big','Pass &rarr;');
+    pass.onclick=()=>{ st.seen++; st.revealed=false; nextRapid(); render(); };
+    const show=el('button','btn', st.revealed?'Hide answer':'Show answer');
+    show.onclick=()=>{ st.revealed=!st.revealed; render(); };
+    const end=el('button','btn ghost','End early');
+    end.onclick=()=>{ st.phase='done'; stopTimer(); render(); };
+    bar.append(ok,pass,show,end);
+    w.appendChild(bar);
+    w.appendChild(el('div','note','Space = correct &middot; Right arrow = pass &middot; A = show answer'));
+    return w;
+  }
+
+  setTimeout(()=>setCounter('Time'),0);
+  w.appendChild(el('div','qcard',
+    `<div class="eyebrow">Round over</div>
+     <div class="tally"><span class="big">${st.count}</span><span>correct out of ${st.seen} asked</span></div>`));
+  const bar=el('div','bar');
+  const again=el('button','btn primary big','Next squatter');
+  again.onclick=()=>{ st.phase='ready'; render(); };
+  bar.appendChild(again); w.appendChild(bar);
+  return w;
+}
+function nextRapid(){
+  const r=R(), st=S.r3;
+  const i=pickRandom(r.questions, st.used);
+  if(i===null){ st.used=[]; st.q=pickRandom(r.questions,[]); }
+  else { st.used.push(i); st.q=i; }
+}
+
+/* ---------- R4: multiple choice ---------- */
+function roundMCQ(r){
+  const st=S.r4, q=r.questions[st.i], w=el('div','stack');
+  setTimeout(()=>setCounter(`${st.i+1} / ${r.questions.length}`),0);
+  const opts=q.options.map((o,i)=>`<div class="opt${st.revealed&&i===q.correct?' correct':''}">
+      <span class="lt">${'ABCD'[i]}</span><span>${esc(o)}</span></div>`).join('');
+  w.appendChild(el('div','qcard',`<div class="qtext">${esc(q.q)}</div><div class="opts">${opts}</div>`));
+  if(r.timer) w.insertAdjacentHTML('beforeend', timerBar());
+  const bar=el('div','bar');
+  const rev=el('button','btn primary big', st.revealed?'Hide answer':'Reveal answer');
+  rev.onclick=()=>{ st.revealed=!st.revealed; stopTimer(); render(); };
+  const prev=el('button','btn','&larr; Prev'); prev.disabled=st.i===0; prev.onclick=()=>go(-1);
+  const next=el('button','btn','Next &rarr;'); next.disabled=st.i>=r.questions.length-1; next.onclick=()=>go(1);
+  bar.append(rev,prev,next);
+  w.appendChild(bar);
+  function go(d){ st.i=Math.max(0,Math.min(r.questions.length-1,st.i+d)); st.revealed=false; timerSet(r.timer); render(); }
+  return w;
+}
+
+/* ---------- JSON in / out ---------- */
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(S.data,null,1)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='sucker-punch-questions.json'; document.body.appendChild(a); a.click(); a.remove();
+  toast('Questions exported');
+}
+function importJSON(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='.json,application/json';
+  inp.onchange=()=>{
+    const f=inp.files[0]; if(!f) return;
+    const fr=new FileReader();
+    fr.onload=()=>{
+      try{
+        const d=JSON.parse(fr.result);
+        if(!d.rounds||!Array.isArray(d.rounds)) throw new Error('no "rounds" array in that file');
+        S.data=d;
+        S.r1={i:0,revealed:false};
+        S.r2={tier:'easy',q:null,revealed:false,used:{easy:[],hard:[]},started:false};
+        S.r3={phase:'ready',q:null,used:[],count:0,seen:0,revealed:false};
+        S.r4={i:0,revealed:false};
+        S.ri=0; S.screen='home'; render(); toast('Questions loaded');
+      }catch(e){ toast('Could not read that file: '+e.message); }
+    };
+    fr.readAsText(f);
+  };
+  inp.click();
+}
+
+/* ---------- keyboard ---------- */
+document.addEventListener('keydown', e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  const r = S.screen!=='home' ? R() : null;
+  if(e.key===' '){
+    e.preventDefault();
+    if(r && r.format==='rapid' && S.r3.phase==='run' && S.screen==='round'){ S.r3.count++; S.r3.seen++; S.r3.revealed=false; nextRapid(); render(); return; }
+    const b=$('#view .btn.primary'); if(b && !b.disabled) b.click();
+    return;
+  }
+  if(e.key==='ArrowRight'){
+    if(r && r.format==='rapid' && S.r3.phase==='run' && S.screen==='round'){ e.preventDefault(); S.r3.seen++; S.r3.revealed=false; nextRapid(); render(); return; }
+    const b=[...document.querySelectorAll('#view .btn')].filter(x=>/Next/i.test(x.textContent)&&!x.disabled)[0];
+    if(b){ e.preventDefault(); b.click(); }
+    return;
+  }
+  if(e.key==='ArrowLeft'){
+    const b=[...document.querySelectorAll('#view .btn')].filter(x=>/Prev/i.test(x.textContent)&&!x.disabled)[0];
+    if(b){ e.preventDefault(); b.click(); }
+    return;
+  }
+  if(e.key==='a'||e.key==='A'){
+    if(r && r.format==='rapid' && S.r3.phase==='run' && S.screen==='round'){ e.preventDefault(); S.r3.revealed=!S.r3.revealed; render(); }
+    return;
+  }
+  if(e.key==='t'||e.key==='T'){ if($('#clock')){ e.preventDefault(); toggleTimer(); } return; }
+  if(e.key==='Escape'){ if(S.screen!=='home'){ S.screen='home'; stopTimer(); render(); } }
+});
+
+/* ---------- boot ---------- */
+$('#brand').onclick=()=>{ S.screen='home'; stopTimer(); render(); };
+(function(){
+  const saved=load();
+  if(saved && saved.data && saved.data.rounds){
+    Object.assign(S, saved);
+    S.t={total:0,left:0,on:false,id:null};
+    if(S.screen==='round') timerSet(R().timer||0);
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>
