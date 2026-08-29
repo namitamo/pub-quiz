@@ -12,6 +12,7 @@
 :root{
   --ink:#0A0A0A; --panel:#141414; --panel2:#1C1C1C; --line:#2A2A28; --line2:#3C3C38;
   --bone:#F4F1E6; --dim:#9C9A90; --faint:#6A6863;
+  --bad:#E4552B;
   --yl:#F2C10D; --yl-hi:#FFD634; --yl-lo:#6E5806; --yl-soft:rgba(242,193,13,.12);
   --display:"Big Shoulders Display","Haettenschweiler","Arial Narrow",sans-serif;
   --body:"Newsreader",Georgia,"Times New Roman",serif;
@@ -27,7 +28,7 @@ body{
 button{font-family:inherit; color:inherit; cursor:pointer}
 button:focus-visible,input:focus-visible{outline:2px solid var(--yl); outline-offset:3px}
 h1,h2,h3{margin:0; text-wrap:balance}
-.app{max-width:1200px; margin:0 auto; padding:0 22px 130px; display:flex; flex-direction:column; min-height:100vh}
+.app{max-width:1200px; margin:0 auto; padding:0 22px 60px; display:flex; flex-direction:column; min-height:100vh}
 
 /* ---------- top bar ---------- */
 .topbar{
@@ -72,9 +73,9 @@ h1,h2,h3{margin:0; text-wrap:balance}
 .btn.huge{padding:20px 46px; font-size:17px; letter-spacing:.2em}
 
 /* ---------- title screen ---------- */
-.hero{padding:52px 0 12px; text-align:center}
+.hero{padding:34px 0 12px; text-align:center}
 .hero .kick{font-family:var(--mono); font-size:11px; letter-spacing:.42em; text-transform:uppercase; color:var(--yl)}
-.hero .dtitle{font-size:clamp(56px,12.5vw,148px); margin-top:16px}
+.hero .dtitle{font-size:clamp(42px,8.6vw,104px); margin-top:4px}
 .hero .dtitle em{font-style:normal; color:var(--yl); display:block}
 .hero .tag{margin-top:16px; font-size:19px; color:var(--dim); font-style:italic}
 .roundgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin-top:26px}
@@ -132,14 +133,28 @@ h1,h2,h3{margin:0; text-wrap:balance}
 .opt .lt{font-family:var(--mono); font-size:13px; color:var(--faint); border:1px solid var(--line2); width:27px; height:27px; display:grid; place-items:center; border-radius:2px; flex:none}
 .opt.correct{border-color:var(--yl); background:var(--yl-soft)}
 .opt.correct .lt{background:var(--yl); color:#100D00; border-color:var(--yl); font-weight:600}
+.opt.pick{width:100%; text-align:left; font-family:var(--body); transition:.14s; cursor:pointer}
+.opt.pick:hover{border-color:var(--yl); background:#242015}
+.opt.wrong{border-color:var(--bad); background:rgba(228,85,43,.13)}
+.opt.wrong .lt{background:var(--bad); color:#150703; border-color:var(--bad); font-weight:600}
+.opt.dim{opacity:.42}
+.opt.correct:hover,.opt.wrong:hover,.opt.dim:hover{background:var(--panel2); border-color:var(--line)}
+.opt.correct:hover{border-color:var(--yl); background:var(--yl-soft)}
+.opt.wrong:hover{border-color:var(--bad); background:rgba(228,85,43,.13)}
+.verdict{
+  font-family:var(--mono); font-size:clamp(15px,1.8vw,20px); letter-spacing:.02em;
+  border-top:1px dashed var(--line2); padding-top:22px; animation:rise .2s ease-out;
+}
+.verdict.right{color:var(--yl)}
+.verdict.wrong{color:var(--bad)}
 
 /* timer */
 .timerbar{display:flex; align-items:center; gap:16px}
 .clock{font-family:var(--mono); font-size:46px; font-weight:500; font-variant-numeric:tabular-nums; min-width:124px}
-.clock.warn{color:var(--yl)} .clock.out{color:#E4552B}
+.clock.warn{color:var(--yl)} .clock.out{color:var(--bad)}
 .track{flex:1; height:5px; background:var(--panel2); border:1px solid var(--line); border-radius:99px; overflow:hidden}
 .fill{height:100%; background:var(--yl); width:100%; transition:width .25s linear}
-.fill.out{background:#E4552B}
+.fill.out{background:var(--bad)}
 
 /* chips */
 .chips{display:flex; gap:9px; flex-wrap:wrap}
@@ -151,31 +166,57 @@ h1,h2,h3{margin:0; text-wrap:balance}
 .chip.static{cursor:default; background:transparent; color:var(--faint); border-color:var(--line)}
 .chip.static:hover{border-color:var(--line); color:var(--faint)}
 
+.anslist{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:3px; overflow:hidden}
+.ansrow{display:grid; grid-template-columns:38px 1fr minmax(150px,.5fr); gap:14px; align-items:baseline;
+  padding:11px 16px; border-bottom:1px solid var(--line); background:var(--panel)}
+.ansrow:last-child{border-bottom:0}
+.ansrow .n{font-family:var(--mono); font-size:11px; color:var(--faint)}
+.ansrow .q{font-size:16px; color:var(--dim)}
+.ansrow .a{font-family:var(--mono); font-size:15px; color:var(--yl)}
+.ansrow.got{background:var(--yl-soft)}
+.ansrow.got .q{color:var(--bone)}
+@media(max-width:700px){.ansrow{grid-template-columns:30px 1fr; gap:6px} .ansrow .a{grid-column:2}}
+
 /* tally */
 .tally{display:flex; gap:12px; align-items:baseline; font-family:var(--mono)}
 .tally .big{font-size:52px; color:var(--yl); font-variant-numeric:tabular-nums; line-height:1}
 
-/* footer */
-.foot{position:fixed; left:0; right:0; bottom:0; z-index:50; background:rgba(10,10,10,.95); border-top:1px solid var(--line); backdrop-filter:blur(8px)}
-.foot .inner{max-width:1200px; margin:0 auto; padding:10px 22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-.keys{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--faint); margin-left:auto}
-kbd{border:1px solid var(--line2); border-bottom-width:2px; border-radius:2px; padding:1px 5px; margin:0 3px; color:var(--dim)}
+/* header menu */
+.menubtn{
+  display:flex; flex-direction:column; justify-content:center; gap:4px; flex:none;
+  width:40px; height:34px; padding:0 8px; background:var(--panel); border:1px solid var(--line);
+  border-radius:2px; transition:.15s;
+}
+.menubtn span{display:block; height:2px; background:var(--dim); border-radius:1px; transition:.15s}
+.menubtn:hover{border-color:var(--yl)}
+.menubtn:hover span{background:var(--yl)}
+.menubtn[aria-expanded="true"]{background:var(--yl); border-color:var(--yl)}
+.menubtn[aria-expanded="true"] span{background:#100D00}
+.menu[hidden]{display:none}
+.menu{
+  position:absolute; right:0; top:calc(100% + 4px); z-index:70; min-width:238px;
+  background:var(--panel); border:1px solid var(--line2); border-radius:3px; padding:8px;
+  display:flex; flex-direction:column; gap:6px; box-shadow:0 16px 44px rgba(0,0,0,.65);
+}
+.menu .btn{width:100%; text-align:left}
+.menu .btn.arm{border-color:var(--bad); color:var(--bad)}
+.menu .keys{
+  font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--faint);
+  line-height:2; padding:8px 4px 2px; border-top:1px solid var(--line); margin-top:2px;
+}
+kbd{border:1px solid var(--line2); border-bottom-width:2px; border-radius:2px; padding:1px 5px; margin-right:5px; color:var(--dim)}
 
-/* logo lockup */
-.lockup{display:flex; flex-direction:column; align-items:center; gap:10px; padding:34px 0 6px; opacity:.85}
-.lockup .by{font-family:var(--mono); font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--faint)}
-.lhlogo{height:46px; width:auto; display:block}
+/* logo */
+.herologo{display:block; margin:0 auto 22px; width:auto; height:clamp(112px,17vw,182px)}
 .lhword{
-  font-family:var(--display); font-weight:700; font-size:26px; letter-spacing:.16em; text-transform:uppercase;
-  color:var(--bone); border:1px solid var(--line2); padding:9px 20px; border-radius:2px;
+  display:inline-block; font-family:var(--display); font-weight:700; font-size:26px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--bone); border:1px solid var(--line2); padding:9px 20px;
+  border-radius:2px; margin:0 auto 26px;
 }
 .lhword em{color:var(--yl); font-style:normal}
-.footlogo{display:flex; align-items:center; gap:9px; margin-left:14px}
-.footlogo img{height:20px; width:auto}
-.footlogo span{font-family:var(--display); font-weight:700; font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim)}
 
 .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:74px; z-index:60; background:var(--panel2); border:1px solid var(--yl); font-family:var(--mono); font-size:13px; padding:11px 18px; border-radius:2px}
-@media(max-width:640px){.qcard{padding:28px 22px} .clock{font-size:34px; min-width:96px} .keys{display:none} .rulebox{padding:22px}}
+@media(max-width:640px){.qcard{padding:28px 22px} .clock{font-size:34px; min-width:96px} .rulebox{padding:22px}}
 </style>
 
 </head>
@@ -187,11 +228,13 @@ kbd{border:1px solid var(--line2); border-bottom-width:2px; border-radius:2px; p
       <span class="sub" id="brandsub">Pub quiz</span>
     </button>
     <nav class="rail" id="rail"></nav>
+    <button class="menubtn" id="menubtn" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="menu" id="menu" hidden></div>
   </div>
   <main id="view"></main>
 </div>
-
-<div class="foot"><div class="inner" id="foot"></div></div>
 
 <script>
 /* =========================================================================
@@ -214,98 +257,119 @@ const DEFAULT_DATA = {
    ],
    "points": {
     "full": 10,
-    "partial": 5,
-    "wrong": 0
+    "partial": 5
    },
    "timer": 0,
    "questions": [
     {
      "q": "What hit Netflix series is also the name of Miyagi Do’s rival Dojo?",
-     "a": "Cobra Kai"
+     "a": "Cobra Kai",
+     "art": "<path d=\"M24 42c0-16 12-26 26-26s26 10 26 26c0 8-3 13-7 17-5 5-8 9-8 15H39c0-6-3-10-8-15-4-4-7-9-7-17z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M24 42c0-16 12-26 26-26s26 10 26 26c0 8-3 13-7 17-5 5-8 9-8 15H39c0-6-3-10-8-15-4-4-7-9-7-17z\"/> <circle cx=\"43\" cy=\"52\" r=\"3.4\" fill=\"#0A0A0A\" stroke=\"none\"/> <circle cx=\"57\" cy=\"52\" r=\"3.4\" fill=\"#0A0A0A\" stroke=\"none\"/> <path d=\"M50 62v6m-4 4 4 4 4-4\" stroke=\"#0A0A0A\" stroke-width=\"3\"/> <path d=\"M40 74c-5 8-1 13 5 16s11 5 13 10\"/>"
     },
     {
      "q": "Name all 4 of the Teenage Mutant Ninja Turtles.",
-     "a": "Michaelangelo, Donatello, Raphael, Leonardo"
+     "a": "Michaelangelo, Donatello, Raphael, Leonardo",
+     "art": "<ellipse cx=\"50\" cy=\"58\" rx=\"25\" ry=\"19\" fill=\"#F2C10D\" stroke=\"none\"/> <ellipse cx=\"50\" cy=\"58\" rx=\"25\" ry=\"19\"/> <path d=\"M50 43l13 8-5 16H42l-5-16z\" stroke=\"#0A0A0A\" stroke-width=\"3.5\"/> <circle cx=\"50\" cy=\"27\" r=\"10\"/> <path d=\"M38 25h24\" stroke=\"#F2C10D\" stroke-width=\"6\"/> <path d=\"M28 71l-6 9M72 71l6 9M39 76l-3 8M61 76l3 8\"/>"
     },
     {
      "q": "In Kill Bill! what colour is Uma Thurman’s iconic jumpsuit as a tribute to the legendary Bruce Lee?",
-     "a": "Yellow"
+     "a": "Yellow",
+     "art": "<path d=\"M40 22h20l4 4 8 26-8 3-3-8v41H52V62h-4v26H39V47l-3 8-8-3 8-26z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M40 22h20l4 4 8 26-8 3-3-8v41H52V62h-4v26H39V47l-3 8-8-3 8-26z\"/> <path d=\"M50 26v34M34 34l4 14M66 34l-4 14\" stroke=\"#0A0A0A\" stroke-width=\"3\"/>"
     },
     {
      "q": "Which martial art did both Jean-Claude Van Damme and Akshay Kumar train in before their acting careers?",
-     "a": "Karate"
+     "a": "Karate",
+     "art": "<path d=\"M12 42h76v16H12z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M12 42h76v16H12z\"/> <path d=\"M42 40h16v20H42z\" fill=\"#0A0A0A\" stroke=\"currentColor\"/> <path d=\"M45 60l-5 26M55 60l5 26\"/>"
     },
     {
      "q": "In Avengers, what is Thor’s weapon of choice?",
-     "a": "Hammer"
+     "a": "Hammer",
+     "art": "<path d=\"M24 24h52l5 11-5 13H24l-5-13z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M24 24h52l5 11-5 13H24l-5-13z\"/> <path d=\"M50 48v40\" stroke-width=\"8\"/> <path d=\"M42 62h16M42 72h16\"/>"
     },
     {
      "q": "In The Matrix, what is the first martial art training program that Neo (Keanu Reeves) has downloaded into his brain?",
-     "a": "Kung Fu"
+     "a": "Kung Fu",
+     "art": "<path d=\"M34 62V34a5.5 5.5 0 0 1 11 0v18\"/> <path d=\"M45 52V26a5.5 5.5 0 0 1 11 0v26\"/> <path d=\"M56 52V32a5.5 5.5 0 0 1 11 0v24\"/> <path d=\"M67 56v-6a5.5 5.5 0 0 1 11 0v20c0 13-11 24-24 24S30 83 30 70v-8a5.5 5.5 0 0 1 8-4\"/>"
     },
     {
      "q": "What is the iconic weapon used by the Jedi in Star Wars?",
-     "a": "Lightsaber"
+     "a": "Lightsaber",
+     "art": "<path d=\"M38 72L78 32\" stroke=\"#F2C10D\" stroke-width=\"11\"/> <path d=\"M22 82l14-14\" stroke-width=\"13\"/> <path d=\"M31 73l6 6\" stroke=\"#0A0A0A\" stroke-width=\"3\"/>"
     },
     {
      "q": "“Eye of the Tiger” by Survivor is the theme song associated with which popular movie or franchise?",
-     "a": "Rocky /3"
+     "a": "Rocky /3",
+     "art": "<path d=\"M32 44c0-13 9-21 22-21s22 8 22 21v14c0 11-8 19-19 19H44c-7 0-12-5-12-12z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M32 44c0-13 9-21 22-21s22 8 22 21v14c0 11-8 19-19 19H44c-7 0-12-5-12-12z\"/> <path d=\"M32 54c-7 0-11 5-11 11s4 11 11 11\"/> <path d=\"M38 77h34v10H38z\"/>"
     },
     {
      "q": "Which anime features a young boy named Goku who trains in martial arts to fight increasingly powerful villains?",
-     "a": "Dragon Ball"
+     "a": "Dragon Ball",
+     "art": "<circle cx=\"50\" cy=\"52\" r=\"29\" fill=\"#F2C10D\" stroke=\"none\"/> <circle cx=\"50\" cy=\"52\" r=\"29\"/> <path transform=\"translate(50 36) scale(1.0)\" fill=\"#0A0A0A\" stroke=\"none\" d=\"M0 -6 1.8 -1.9 6.2 -1.5 2.8 1.4 3.8 5.8 0 3.4 -3.8 5.8 -2.8 1.4 -6.2 -1.5 -1.8 -1.9Z\"/><path transform=\"translate(36 54) scale(1.0)\" fill=\"#0A0A0A\" stroke=\"none\" d=\"M0 -6 1.8 -1.9 6.2 -1.5 2.8 1.4 3.8 5.8 0 3.4 -3.8 5.8 -2.8 1.4 -6.2 -1.5 -1.8 -1.9Z\"/><path transform=\"translate(64 54) scale(1.0)\" fill=\"#0A0A0A\" stroke=\"none\" d=\"M0 -6 1.8 -1.9 6.2 -1.5 2.8 1.4 3.8 5.8 0 3.4 -3.8 5.8 -2.8 1.4 -6.2 -1.5 -1.8 -1.9Z\"/><path transform=\"translate(50 70) scale(1.0)\" fill=\"#0A0A0A\" stroke=\"none\" d=\"M0 -6 1.8 -1.9 6.2 -1.5 2.8 1.4 3.8 5.8 0 3.4 -3.8 5.8 -2.8 1.4 -6.2 -1.5 -1.8 -1.9Z\"/>"
     },
     {
      "q": "For the Jason Bourne movies, Matt Damon trained extensively in which martial art?",
-     "a": "Filipino Martial Arts, Kali"
+     "a": "Filipino Martial Arts, Kali",
+     "art": "<path d=\"M22 24l56 56\" stroke=\"#F2C10D\" stroke-width=\"9\"/> <path d=\"M78 24L22 80\" stroke=\"#F2C10D\" stroke-width=\"9\"/> <path d=\"M28 30l8 8M72 30l-8 8\" stroke=\"#0A0A0A\" stroke-width=\"4\"/>"
     },
     {
      "q": "Name the legendary 7’2” NBA player who starred in the Bruce Lee film “Game of Death”.",
-     "a": "Kareem Abdul-Jabbar"
+     "a": "Kareem Abdul-Jabbar",
+     "art": "<circle cx=\"50\" cy=\"52\" r=\"29\" fill=\"#F2C10D\" stroke=\"none\"/> <circle cx=\"50\" cy=\"52\" r=\"29\"/> <path d=\"M21 52h58M50 23v58M31 31c11 11 11 31 0 42M69 31c-11 11-11 31 0 42\" stroke=\"#0A0A0A\" stroke-width=\"3.2\"/>"
     },
     {
      "q": "In the Kung Fu Panda franchise, what’s the name of the mystical, coveted scroll everyone’s searching for, which turns out to contain… nothing but a reflective surface?",
-     "a": "The Dragon Scroll"
+     "a": "The Dragon Scroll",
+     "art": "<path d=\"M28 32h44v40H28z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M28 32h44v40H28z\"/> <rect x=\"20\" y=\"22\" width=\"60\" height=\"12\" rx=\"6\"/> <rect x=\"20\" y=\"70\" width=\"60\" height=\"12\" rx=\"6\"/> <path d=\"M40 46c6-4 14 4 20 0\" stroke=\"#0A0A0A\" stroke-width=\"3.2\"/> <path d=\"M40 58c6-4 14 4 20 0\" stroke=\"#0A0A0A\" stroke-width=\"3.2\"/>"
     },
     {
      "q": "In Lord of the Rings, what is the primary weapon of Gimli the dwarf?",
-     "a": "Axe"
+     "a": "Axe",
+     "art": "<path d=\"M44 18l14 2c11 2 18 9 20 17-2 9-9 16-20 18l-14 2z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M44 18l14 2c11 2 18 9 20 17-2 9-9 16-20 18l-14 2z\"/> <path d=\"M44 10v80\"/>"
     },
     {
      "q": "Master Oogway from Kung Fu Panda is what animal?",
-     "a": "Tortoise"
+     "a": "Tortoise",
+     "art": "<path d=\"M20 64c0-17 13-28 30-28s30 11 30 28z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M20 64c0-17 13-28 30-28s30 11 30 28z\"/> <path d=\"M20 64h60\"/> <path d=\"M20 60c-7 0-11-4-11-9s5-8 9-7\"/> <circle cx=\"13\" cy=\"48\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/> <path d=\"M32 64v12M64 64v12\"/> <path d=\"M35 62c0-8 3-13 7-16M50 62V40M65 62c0-8-3-13-7-16\" stroke=\"#0A0A0A\" stroke-width=\"3\"/>"
     },
     {
      "q": "Complete the song lyric: “Everybody was kung fu fighting, these cats were fast as________ what?",
-     "a": "Lightning"
+     "a": "Lightning",
+     "art": "<path d=\"M58 12 28 56h16l-6 32 30-46H50z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M58 12 28 56h16l-6 32 30-46H50z\"/>"
     },
     {
      "q": "Name the fictional secret underground no holds barred tournament which Frank Dux played by Jean-Claude Van Damme wins in the movie Bloodsport.",
-     "a": "Kumite"
+     "a": "Kumite",
+     "art": "<circle cx=\"50\" cy=\"50\" r=\"32\"/> <path d=\"M31 46c0-4 3-7 7-7h20c6 0 11 5 11 11v8c0 6-5 11-11 11H38c-4 0-7-3-7-7z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M31 46c0-4 3-7 7-7h20c6 0 11 5 11 11v8c0 6-5 11-11 11H38c-4 0-7-3-7-7z\"/> <path d=\"M37 39a4.5 4.5 0 0 1 9 0M46 39a4.5 4.5 0 0 1 9 0M55 39a4.5 4.5 0 0 1 9 0\"/> <path d=\"M31 55c-5 0-8 3-8 7s3 7 8 7\"/>"
     },
     {
      "q": "What epic finishing move does Danny LaRusso use to win the Karate championship in the original Karate Kid movie?",
-     "a": "Crane Kick"
+     "a": "Crane Kick",
+     "art": "<circle cx=\"48\" cy=\"18\" r=\"8\"/> <path d=\"M48 26v26\"/> <path d=\"M48 32 26 20M48 32l22-12\"/> <path d=\"M48 52l-9 34\"/> <path d=\"M48 52l18-8 14 6\"/>"
     },
     {
      "q": "Which ‘deadly’ WWE/WWF star had a cameo in Bollywood movie Khiladiyon Ka Khiladi?",
-     "a": "The Undertaker"
+     "a": "The Undertaker",
+     "art": "<path d=\"M30 88V46a20 20 0 0 1 40 0v42z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M30 88V46a20 20 0 0 1 40 0v42z\"/> <path d=\"M50 50v26M40 60h20\" stroke=\"#0A0A0A\" stroke-width=\"4\"/> <path d=\"M20 88h60\"/>"
     },
     {
-     "q": "What is the name of the mythical sword that King Arthur is believed to have pulled from the stone to legitimise his claim to the throne?",
-     "a": "Excalibur"
+     "q": "What was the name of King Arthur's Father?",
+     "a": "Uther Pendragon",
+     "art": "<path d=\"M22 72 17 32l17 13 16-23 16 23 17-13-5 40z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M22 72 17 32l17 13 16-23 16 23 17-13-5 40z\"/> <path d=\"M20 82h60\"/> <circle cx=\"50\" cy=\"58\" r=\"3.4\" fill=\"#0A0A0A\" stroke=\"none\"/>"
     },
     {
      "q": "Liu Kang, Scorpion, Sub Zero, Raiden, Johny Cage are all characters from which popular video game and also movie franchise?",
-     "a": "Mortal Kombat"
+     "a": "Mortal Kombat",
+     "art": "<circle cx=\"50\" cy=\"50\" r=\"32\"/> <path d=\"M18 56l16-6 2-12 10 8 6-12 4 12c10 2 16 10 15 19-1 10-11 17-22 16-9-1-16-6-19-13l-12 2z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M18 56l16-6 2-12 10 8 6-12 4 12c10 2 16 10 15 19-1 10-11 17-22 16-9-1-16-6-19-13l-12 2z\"/> <circle cx=\"53\" cy=\"53\" r=\"3\" fill=\"#0A0A0A\" stroke=\"none\"/> <path d=\"M28 54l10 2\" stroke=\"#0A0A0A\" stroke-width=\"3\"/>"
     },
     {
      "q": "\"My name is Maximus Decimus Meridius, commander of the armies of the North, general of the Felix Legions, loyal servant to the true emperor, Marcus Aurelius. Father to a murdered son, husband to a murdered wife—and I will have my vengeance, in this life or the next.\" is a line from which 2000 movie?",
-     "a": "Gladiator"
+     "a": "Gladiator",
+     "art": "<path d=\"M32 80V54a18 18 0 0 1 36 0v26\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M32 80V54a18 18 0 0 1 36 0v26\"/> <path d=\"M35 46c3-17 27-17 30 0\" stroke=\"#F2C10D\" stroke-width=\"11\"/> <path d=\"M35 46c3-17 27-17 30 0\"/> <path d=\"M50 54v26M38 64h9M53 64h9\" stroke=\"#0A0A0A\" stroke-width=\"4.5\"/> <path d=\"M26 80h48\"/>"
     },
     {
-     "q": "The phrase “Choose your destiny…” is followed by what two words in the famous Mortal Kombat video games and movies series song?",
-     "a": "Flawless victory!"
+     "q": "Steven Seagal is famous for being a black belt in which martial art?",
+     "a": "Aikido",
+     "art": "<path d=\"M72 30a30 30 0 1 0 8 26\" stroke=\"#F2C10D\" stroke-width=\"8\"/> <path d=\"M64 30l12-8 1 15z\" fill=\"#F2C10D\" stroke=\"none\"/> <path d=\"M36 62a16 16 0 1 1 23-21\"/> <path d=\"M62 46l-3-11-9 6z\" fill=\"currentColor\" stroke=\"none\"/>"
     }
    ]
   },
@@ -316,38 +380,31 @@ const DEFAULT_DATA = {
    "difficulty": "Medium",
    "format": "pick",
    "rules": [
-    "3 questions per team",
+    "3 questions per team, turn by turn",
     "Team chooses Easy or Difficult",
     "Easy = 10 points (5 if partially correct)",
-    "Difficult = 20 points (10 if partially correct)",
-    "Wrong answer penalty",
-    "Answer correctly → nominate another team, or apply a handicap"
+    "Difficult = 40 points (20 if partially correct)",
+    "No wrong-answer penalty",
+    "Answer correctly → handicap another team"
    ],
    "points": {
     "easy": {
      "full": 10,
-     "partial": 5,
-     "wrong": -5
+     "partial": 5
     },
     "hard": {
-     "full": 20,
-     "partial": 10,
-     "wrong": -10
+     "full": 40,
+     "partial": 20
     }
    },
    "timer": 30,
    "timerShort": 15,
    "handicaps": [
-    "Make another team answer next",
-    "Block one person from answering",
+    "Prevent one person from answering the next question",
     "Team cannot discuss",
     "Reduced time (15s)"
    ],
    "easyQuestions": [
-    {
-     "q": "What martial art did Bruce Lee create?",
-     "a": "Jeet Kune Do"
-    },
     {
      "q": "What color belt typically signifies a beginner in most martial arts?",
      "a": "White"
@@ -361,12 +418,8 @@ const DEFAULT_DATA = {
      "a": "Brazilian Jiu-Jitsu (BJJ)"
     },
     {
-     "q": "What's the highest belt rank in most traditional martial arts?",
-     "a": "Black belt"
-    },
-    {
-     "q": "Which martial art uses punches, kicks, elbows, and knees, and is known as \"the art of eight limbs\"?",
-     "a": "Muay Thai"
+     "q": "What martial art did Bruce Lee create?",
+     "a": "Jeet Kune Do"
     },
     {
      "q": "Which country is Taekwondo from?",
@@ -375,6 +428,10 @@ const DEFAULT_DATA = {
     {
      "q": "Which martial art was popularized in the West largely through the movie career of Bruce Lee?",
      "a": "Kung Fu"
+    },
+    {
+     "q": "What's the highest belt rank in most traditional martial arts?",
+     "a": "Black belt"
     },
     {
      "q": "In boxing, how many rounds are in a standard professional championship fight?",
@@ -393,7 +450,7 @@ const DEFAULT_DATA = {
      "a": "Dance, music, and acrobatics"
     },
     {
-     "q": "What martial art is Israeli in origin and used by its military?",
+     "q": "What martial art is used by the Israeli Military?",
      "a": "Krav Maga"
     },
     {
@@ -401,7 +458,11 @@ const DEFAULT_DATA = {
      "a": "Judo"
     },
     {
-     "q": "What's the term for a martial arts training hall?",
+     "q": "What's the fan-coined term for the stylized blend of gunplay and hand-to-hand combat popularized by the John Wick films?",
+     "a": "Gun-Fu"
+    },
+    {
+     "q": "What's the Japanese term for a martial arts training hall?",
      "a": "Dojo"
     },
     {
@@ -409,40 +470,60 @@ const DEFAULT_DATA = {
      "a": "Sensei"
     },
     {
-     "q": "Which martial art combines wrestling, boxing, and other styles, and is used in the UFC?",
-     "a": "Mixed Martial Arts (MMA)"
+     "q": "Which ninja-focused martial art is practiced by Splinter and taught to the Teenage Mutant Ninja Turtles?",
+     "a": "Ninjutsu"
     },
     {
-     "q": "What's the term for a fight ending because a fighter is knocked unconscious?",
-     "a": "Knockout (KO)"
+     "q": "What's the loud shout martial artists make when striking, used to focus power and startle an opponent?",
+     "a": "Kiai"
     },
     {
-     "q": "What's the term for the bow performed at the start and end of a martial arts class?",
-     "a": "Bow (or \"rei\")"
+     "q": "Which martial art is known as \"the art of eight limbs\"?",
+     "a": "Muay Thai"
     },
     {
-     "q": "Which martial art emphasizes circular movement and redirecting an opponent's force rather than opposing it directly?",
+     "q": "Which martial art was founded by Morihei Ueshiba, often referred to by practitioners as O-Sensei?",
      "a": "Aikido"
-    },
-    {
-     "q": "What's the name of the world's largest mixed martial arts organization, known by its initials?",
-     "a": "UFC"
     },
     {
      "q": "What's the name of the traditional Japanese sword-fighting sport using bamboo swords and protective armor?",
      "a": "Kendo"
     },
     {
-     "q": "What's the general term for a striking-based combat sport combining punches and kicks, popularized globally through K-1 competitions?",
-     "a": "Kickboxing"
+     "q": "What's the term for a joint-lock submission that hyperextends the elbow, one of the most common submissions in BJJ and Judo?",
+     "a": "Armbar"
     },
     {
-     "q": "What color belt is typically awarded just before black belt in many ranking systems, indicating advanced student status?",
-     "a": "Brown belt"
+     "q": "Which Indian martial art from Kerala is frequently described as one of India's oldest surviving martial traditions?",
+     "a": "Kalaripayttu"
     },
     {
-     "q": "What's the name of the straight, thrusting kick using the front of the foot",
-     "a": "one of the most basic kicks taught in karate and taekwondo? — Front kick (Mae Geri)"
+     "q": "Which Okinawan weapon consists of two short sticks connected by a cord or chain?",
+     "a": "Nunchucks"
+    },
+    {
+     "q": "Which legendary Japanese swordsman wrote The Book of Five Rings shortly before his death in 1645?",
+     "a": "Miyamoto Musashi"
+    },
+    {
+     "q": "What is the name of the famous Chinese martial arts monastery in Henan province that became strongly associated with Chinese martial arts traditions?",
+     "a": "Shaolin Temple"
+    },
+    {
+     "q": "What's the term for a fight ending early because a competitor can't safely continue, called by the referee or their corner?",
+     "a": "TKO (technical knockout)"
+    },
+    {
+     "q": "What do you call a Japanese martial arts uniform?",
+     "a": "Gi"
+    },
+    {
+     "q": "What martial art was BJJ originally adapted from?",
+     "a": "Judo"
+    },
+    {
+     "q": "What weapon is most associated with traditional Filipino Kali/Eskrima training?",
+     "a": "Sticks (escrima sticks)"
     }
    ],
    "hardQuestions": [
@@ -459,80 +540,68 @@ const DEFAULT_DATA = {
      "a": "Sambo"
     },
     {
-     "q": "What martial art was BJJ originally adapted from?",
-     "a": "Judo"
+     "q": "What is the name of the Indian mace traditionally used by wrestlers and associated in mythology with warriors such as Hanuman and Bhima?",
+     "a": "Gada"
     },
     {
      "q": "What's the term for the traditional belt/sash worn in Brazilian Jiu-Jitsu and Judo that indicates rank?",
      "a": "Obi"
     },
     {
-     "q": "What's the term for a joint-lock submission that hyperextends the elbow, one of the most common submissions in BJJ and Judo?",
-     "a": "Armbar"
+     "q": "What is the name of the Indian punch dagger characterised by an H-shaped horizontal grip?",
+     "a": "Katar"
     },
     {
-     "q": "In Judo, what's the term for a full-point, fight-ending throw?",
-     "a": "Ippon"
+     "q": "Which martial arts film star won multiple Wushu championships in China before beginning his movie career and later starred in Once Upon a Time in China?",
+     "a": "Jet Li"
     },
     {
-     "q": "What's the term in Japanese ranking systems for belt grades below black belt (student grades)?",
-     "a": "Kyu"
+     "q": "What is the Japanese term for the wooden sword commonly used in martial arts training?",
+     "a": "Bokken"
     },
     {
-     "q": "In BJJ competition, how many points is a full mount typically worth?",
-     "a": "4 points"
+     "q": "What is the name of the Japanese grappling art practised by the samurai and from which modern Judo developed?",
+     "a": "Jujutsu"
     },
     {
-     "q": "In grappling, what's the term for using your legs to control an opponent from underneath?",
-     "a": "Guard"
+     "q": "What is the name of the South Indian flexible sword consisting of one or more long, whip-like steel blades?",
+     "a": "Urumi"
     },
     {
-     "q": "What's the term for the pre-fight ritual dance in Muay Thai performed to honor teachers and show respect?",
-     "a": "Wai Kru Ram Muay"
+     "q": "What's the name of the clay-and-straw ring that Sumo wrestlers compete in?",
+     "a": "Dohyo"
     },
     {
-     "q": "What's the term for a fight ending early because a competitor can't safely continue, called by the referee or their corner?",
-     "a": "TKO (technical knockout)"
+     "q": "Which West African wrestling tradition, hugely popular in Senegal, involves ritual dances, amulets, and draws massive live crowds?",
+     "a": "Laamb (Senegalese wrestling)"
     },
     {
-     "q": "In Brazilian Jiu-Jitsu, what's the common slang term for live, freestyle sparring practice?",
-     "a": "Rolling"
-    },
-    {
-     "q": "In Muay Thai, what's the name for the clinch position where fighters control the opponent's neck to land knee strikes?",
-     "a": "Thai clinch (or \"neck clinch\")"
+     "q": "Which martial art's name literally translates as “Way of the Empty Hand”?",
+     "a": "Karate"
     },
     {
      "q": "What's the term for the weaving double-stick drills practiced in Kali, whose name literally means \"to weave\"?",
      "a": "Sinawali"
     },
     {
-     "q": "What's the term for a grappling position where you control an opponent from the side, perpendicular to their body, on the ground?",
-     "a": "Side control"
+     "q": "What does HEMA stand for?",
+     "a": "Historical European Martial Arts"
     },
     {
-     "q": "Which ancient Greek combat sport combined boxing and wrestling with almost no rules, and was part of the ancient Olympics?",
-     "a": "Pankration"
+     "q": "Name any one of the traditional Thai martial arts that came before modern Muay Thai?",
+     "a": "Muay Boran, Muay Chaiya, Krabi Krabong"
     },
     {
      "q": "What does \"judo\" translate to in English?",
      "a": "\"The gentle way\""
     },
     {
-     "q": "What's the name for a formal sequence of movements practiced solo in karate or kung fu?",
-     "a": "Kata (or \"forms\")"
-    },
-    {
-     "q": "What do you call a Japanese martial arts uniform?",
-     "a": "Gi (or \"dobok\" in Taekwondo)"
+     "q": "What's the name for a formal sequence of movements practiced solo in karate?",
+     "a": "Kata"
     },
     {
      "q": "What martial art literally translates to \"way of the foot and fist\"?",
      "a": "Taekwondo"
-    },
-    {
-     "q": "What weapon is most associated with traditional Filipino Kali/Eskrima training?",
-     "a": "Sticks (escrima sticks)"
     },
     {
      "q": "Which martial art is known for its close-range trapping and use of a wooden training dummy?",
@@ -543,8 +612,24 @@ const DEFAULT_DATA = {
      "a": "Capoeira"
     },
     {
-     "q": "What's the name of the ancient Indian martial art, considered one of the oldest fighting systems in the world, traditionally practiced in Kerala and incorporating oil massage into training?",
-     "a": "Kalaripayattu"
+     "q": "Which internal Chinese martial art is named after the Eight Trigrams of the I Ching?",
+     "a": "Baguazhang"
+    },
+    {
+     "q": "What's the name of the leg-lock submission targeting the ankle, considered one of the most dangerous submissions in no-gi grappling?",
+     "a": "Heel hook"
+    },
+    {
+     "q": "What's the term for Iceland's traditional wrestling style, in which competitors grip each other's belts throughout the match?",
+     "a": "Glíma"
+    },
+    {
+     "q": "What's the term for traditional Okinawan weapons-based martial arts, often practiced alongside karate and including tools like the sai, nunchaku, and bo staff?",
+     "a": "Kobudo"
+    },
+    {
+     "q": "What's the term for the formal kneeling position used at the start and end of many Japanese martial arts classes?",
+     "a": "Seiza"
     }
    ]
   },
@@ -973,8 +1058,8 @@ const DEFAULT_DATA = {
      "a": "Hyoid bone"
     },
     {
-     "q": "How many teeth does a shark lose and regrow over a lifetime, roughly speaking",
-     "a": "thousands or just a few dozen? — Thousands"
+     "q": "How many teeth does a shark lose and regrow over a lifetime, roughly speaking?",
+     "a": "Thousands"
     },
     {
      "q": "What's the capital of Greece?",
@@ -1184,7 +1269,7 @@ const DEFAULT_DATA = {
      "q": "Where is the Oldest Depiction of a Martial Art Found?",
      "options": [
       "Egypt",
-      "Turkey",
+      "China",
       "Greece",
       "India"
      ],
@@ -1224,11 +1309,11 @@ const DEFAULT_DATA = {
      "q": "Pankration, which combined striking and grappling, originated in which ancient civilization?",
      "options": [
       "Roman",
-      "Persian",
       "Greek",
+      "Persian",
       "Egyptian"
      ],
-     "correct": 2
+     "correct": 1
     },
     {
      "q": "What kind of weapon was the German Zweihänder?",
@@ -1348,7 +1433,7 @@ const DEFAULT_DATA = {
       "Divodasa",
       "Janamejaya"
      ],
-     "correct": 1
+     "correct": 0
     },
     {
      "q": "The Wars of the Roses were primarily fought between which two rival branches of the Plantagenet dynasty?",
@@ -1373,7 +1458,7 @@ const DEFAULT_DATA = {
     {
      "q": "Which battle is traditionally associated with a major victory by the Britons over the Anglo-Saxons and was later connected with King Arthur?",
      "options": [
-      "Mount Badon",
+      "Badon Hill",
       "Bosworth Field",
       "Stamford Bridge",
       "Brunanburh"
@@ -1399,6 +1484,116 @@ const DEFAULT_DATA = {
       "Excalibur"
      ],
      "correct": 1
+    },
+    {
+     "q": "Years after the Battle of Kadesh, Egypt and the Hittite Empire concluded an agreement famous for being what?",
+     "options": [
+      "The first surviving international peace treaty",
+      "The first declaration of war",
+      "The first military alliance in history",
+      "The first written surrender"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "Hadrian's Wall marked a heavily fortified frontier of the Roman province of what?",
+     "options": [
+      "Germania",
+      "Britannia",
+      "Gallia",
+      "Hispania"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "Which of these goddesses is NOT associated with war or battle?",
+     "options": [
+      "The Morrígan — Ireland",
+      "Sekhmet — Egypt",
+      "Inanna — Mesopotamia",
+      "Frigg - Norse"
+     ],
+     "correct": 3
+    },
+    {
+     "q": "Which city did Joan of Arc famously help relieve from an English siege in 1429?",
+     "options": [
+      "Paris",
+      "Rouen",
+      "Orléans",
+      "Calais"
+     ],
+     "correct": 2
+    },
+    {
+     "q": "The oldest swords so far known archaeologically were discovered in which country?",
+     "options": [
+      "Greece",
+      "Turkey",
+      "Egypt",
+      "India"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "According to recent archaeological dating, evidence associated with iron technology in Tamil Nadu may date back approximately how far?",
+     "options": [
+      "500 BCE",
+      "1000 BCE",
+      "2000 BCE or earlier",
+      "200 CE"
+     ],
+     "correct": 2
+    },
+    {
+     "q": "Before the Katana became the most iconic samurai weapon, which weapon was particularly important to the early samurai?",
+     "options": [
+      "Bow",
+      "Sword",
+      "Sai",
+      "Naginata"
+     ],
+     "correct": 0
+    },
+    {
+     "q": "Archaeological discoveries of armed female burials on the Eurasian steppe have often been connected to which people as a possible historical inspiration for Amazon stories?",
+     "options": [
+      "Phoenicians",
+      "Scythians",
+      "Spartans",
+      "Minoans"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "At which battle did Alexander decisively defeat Darius III in 331 BCE?",
+     "options": [
+      "Thermopylae",
+      "Gaugamela",
+      "Marathon",
+      "Chaeronea"
+     ],
+     "correct": 1
+    },
+    {
+     "q": "Napoleon is famously remembered as extremely short. Approximately how tall was he actually?",
+     "options": [
+      "4 ft 10 in",
+      "5 ft 2 in",
+      "5 ft 6–7 in",
+      "6 ft 1 in"
+     ],
+     "correct": 2
+    },
+    {
+     "q": "For centuries, which country was famous for producing and exporting high-quality crucible steel prized for sword and blade making?",
+     "options": [
+      "China",
+      "India",
+      "Japan",
+      "France"
+     ],
+     "correct": 1
     }
    ]
   }
@@ -1407,16 +1602,18 @@ const DEFAULT_DATA = {
 
 /* Lighthaven India logo. Paste a data: URI (or a URL) here to swap it in;
    if empty, a typographic wordmark is used instead. */
-const LOGO_SRC = "";
+const LOGO_SRC = "data:image/png;base64,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";
 
 const S = {
   data: JSON.parse(JSON.stringify(DEFAULT_DATA)),
+  custom: false,
+  custom: false,
   screen: 'home',           // home | intro | round
   ri: 0,
   r1: {i:0, revealed:false},
   r2: {tier:'easy', q:null, revealed:false, used:{easy:[],hard:[]}, started:false},
-  r3: {phase:'ready', q:null, used:[], count:0, seen:0, revealed:false},
-  r4: {i:0, revealed:false},
+  r3: {phase:'ready', q:null, used:[], count:0, seen:0, asked:[]},
+  r4: {i:0, picked:null},
   t: {total:0, left:0, on:false, id:null}
 };
 const $ = s => document.querySelector(s);
@@ -1426,8 +1623,14 @@ const R = () => S.data.rounds[S.ri];
 const qcount = r => (r.questions?r.questions.length:0) + (r.easyQuestions?r.easyQuestions.length+r.hardQuestions.length:0);
 
 /* ---------- persistence (best effort) ---------- */
-const KEY='sucker-punch-quiz-v1';
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify({data:S.data,screen:S.screen,ri:S.ri,r1:S.r1,r2:S.r2,r3:S.r3,r4:S.r4})); }catch(e){} }
+const KEY='sucker-punch-quiz-v3';
+function save(){
+  try{
+    const out={screen:S.screen,ri:S.ri,r1:S.r1,r2:S.r2,r3:S.r3,r4:S.r4,custom:!!S.custom};
+    if(S.custom) out.data=S.data;   // built-in questions are never cached — the file is the source of truth
+    localStorage.setItem(KEY, JSON.stringify(out));
+  }catch(e){}
+}
 function load(){ try{ const r=localStorage.getItem(KEY); return r?JSON.parse(r):null; }catch(e){ return null; } }
 function wipe(){ try{ localStorage.removeItem(KEY); }catch(e){} }
 
@@ -1485,19 +1688,17 @@ function pickRandom(pool, used){
   const free=pool.map((_,i)=>i).filter(i=>!used.includes(i));
   return free.length? free[Math.floor(Math.random()*free.length)] : null;
 }
-function logoNode(size){
+function logoNode(){
   if(LOGO_SRC && LOGO_SRC.indexOf('__')!==0){
-    const i=el('img', size==='small'?'':'lhlogo'); i.src=LOGO_SRC; i.alt='Lighthaven India';
-    if(size==='small') i.style.height='20px';
+    const i=el('img','herologo'); i.src=LOGO_SRC; i.alt='Lighthaven India';
     return i;
   }
-  return el('div', size==='small'?'':'lhword', size==='small'
-    ? '<span>Lighthaven India</span>' : 'Light<em>haven</em> India');
+  return el('div','lhword','Light<em>haven</em> India');
 }
 
 /* ---------- render ---------- */
 function render(){
-  renderRail(); renderFoot();
+  renderRail(); renderMenu();
   const v=$('#view'); v.innerHTML='';
   if(S.screen==='home') v.appendChild(viewHome());
   else if(S.screen==='intro') v.appendChild(viewIntro());
@@ -1515,40 +1716,54 @@ function renderRail(){
     rail.appendChild(b);
   });
 }
-function renderFoot(){
-  const f=$('#foot'); f.innerHTML='';
-  const add=(l,c,fn)=>{const b=el('button','btn sm '+(c||''),l); b.onclick=fn; f.appendChild(b);};
-  if(S.screen!=='home') add('Home','ghost',()=>{ S.screen='home'; stopTimer(); render(); });
-  if(S.screen==='round') add('Round rules','ghost',()=>{ S.screen='intro'; stopTimer(); render(); });
-  add('Load questions','ghost',importJSON);
-  add('Export questions','ghost',exportJSON);
-  add('Start over','ghost',()=>{ if(confirm('Clear all progress through the questions?')){ wipe(); location.reload(); } });
-  const lk=el('div','footlogo'); lk.appendChild(logoNode('small')); f.appendChild(lk);
-  f.appendChild(el('div','keys','<kbd>Space</kbd>reveal <kbd>&rarr;</kbd>next <kbd>T</kbd>timer'));
+function resetAll(){
+  stopTimer();
+  S.r1={i:0, revealed:false};
+  S.r2={tier:'easy', q:null, revealed:false, used:{easy:[],hard:[]}, started:false};
+  S.r3={phase:'ready', q:null, used:[], count:0, seen:0, asked:[]};
+  S.r4={i:0, picked:null};
+  S.ri=0; S.screen='home';
+  wipe(); render(); save();
+  toast('Start over — every round is back to the beginning');
+}
+function closeMenu(){ $('#menu').hidden=true; $('#menubtn').setAttribute('aria-expanded','false'); }
+function renderMenu(){
+  const m=$('#menu'); m.innerHTML='';
+  const add=(l,fn)=>{const b=el('button','btn sm ghost',l); b.onclick=()=>{ closeMenu(); fn(); }; m.appendChild(b);};
+  if(S.screen!=='home') add('Home',()=>{ S.screen='home'; stopTimer(); render(); });
+  if(S.screen==='round') add('Round rules',()=>{ S.screen='intro'; stopTimer(); render(); });
+  add('Load questions', importJSON);
+  add('Export questions', exportJSON);
+  const so=el('button','btn sm ghost','Start over');
+  so.onclick=()=>{
+    if(so.dataset.armed==='1'){ closeMenu(); resetAll(); return; }
+    so.dataset.armed='1'; so.textContent='Click again to confirm'; so.classList.add('arm');
+    clearTimeout(so._t); so._t=setTimeout(()=>{ so.dataset.armed=''; so.textContent='Start over'; so.classList.remove('arm'); }, 4000);
+  };
+  m.appendChild(so);
+  m.appendChild(el('div','keys',
+    '<div><kbd>Space</kbd>reveal / correct</div><div><kbd>&rarr;</kbd>next question</div><div><kbd>A B C D</kbd>pick an option</div><div><kbd>T</kbd>start or pause timer</div><div><kbd>Esc</kbd>back to home</div>'));
 }
 
 /* ---------- home ---------- */
 function viewHome(){
   const w=el('div','stack');
-  w.appendChild(el('div','hero',`
-    <div class="kick">Four rounds &middot; ${S.data.rounds.reduce((n,r)=>n+qcount(r),0)} questions</div>
-    <h1 class="dtitle">Sucker <em>Punch</em><span style="display:block;font-size:.42em;letter-spacing:.12em;margin-top:.25em">Pub Quiz</span></h1>
-    <p class="tag">Movies, martial arts, a one-minute squat, and epic wars.</p>`));
+  const hero=el('div','hero');
+  hero.appendChild(logoNode());
+  hero.insertAdjacentHTML('beforeend',
+    `<h1 class="dtitle">Sucker <em>Punch</em><span style="display:block;font-size:.42em;letter-spacing:.12em;margin-top:.25em">Pub Quiz</span></h1>
+     <p class="tag">Movies, martial arts, a one-minute squat, and epic wars.</p>`);
+  w.appendChild(hero);
   const g=el('div','roundgrid');
   S.data.rounds.forEach((r,i)=>{
     const c=el('button','rcard');
     c.innerHTML=`<div class="no">${String(i+1).padStart(2,'0')}</div>
       <span class="diffpill${r.difficulty==='Hard'?' hot':''}">${esc(r.difficulty)}</span>
-      <h3>${esc(r.subtitle)}</h3>
-      <div class="cnt">${qcount(r)} questions</div>`;
+      <h3>${esc(r.subtitle)}</h3>`;
     c.onclick=()=>openRound(i);
     g.appendChild(c);
   });
   w.appendChild(g);
-  const lk=el('div','lockup');
-  lk.appendChild(el('div','by','Brought to you by'));
-  lk.appendChild(logoNode());
-  w.appendChild(lk);
   return w;
 }
 
@@ -1570,8 +1785,8 @@ function startRound(){
   const r=R();
   if(r.format==='open'){ S.r1.revealed=false; }
   if(r.format==='pick'){ S.r2.started=false; S.r2.revealed=false; }
-  if(r.format==='rapid'){ S.r3.phase='ready'; S.r3.count=0; S.r3.seen=0; S.r3.revealed=false; }
-  if(r.format==='mcq'){ S.r4.revealed=false; }
+  if(r.format==='rapid'){ S.r3.phase='ready'; S.r3.count=0; S.r3.seen=0; S.r3.asked=[]; }
+  if(r.format==='mcq'){ S.r4.picked=null; }
   timerSet(r.timer||0);
   S.screen='round'; render();
 }
@@ -1640,7 +1855,7 @@ function roundPick(r){
   setTimeout(()=>setCounter(`${st.tier==='easy'?'Easy':'Difficult'} · ${r.points[st.tier].full} pts`),0);
   w.appendChild(el('div','qcard',
     `<div class="qtext">${esc(q.q)}</div>${st.revealed?`<div class="answer">${esc(q.a)}</div>`:''}`));
-  w.insertAdjacentHTML('beforeend', timerBar());
+  if(r.timer) w.insertAdjacentHTML('beforeend', timerBar());
   const bar=el('div','bar');
   const rev=el('button','btn primary big', st.revealed?'Hide answer':'Reveal answer');
   rev.onclick=()=>{ st.revealed=!st.revealed; stopTimer(); render(); };
@@ -1668,10 +1883,10 @@ function roundRapid(r){
     w.appendChild(el('div','qcard',
       `<div class="eyebrow">Nominate the squatter</div>
        <div class="qtext">One minute. As many as they can take.</div>
-       <div class="note">${r.questions.length-st.used.length} questions still unused &middot; no question repeats between teams</div>`));
+       <div class="note">Answers stay hidden &mdash; they all come up together when the minute is done</div>`));
     const bar=el('div','bar');
     const go=el('button','btn primary huge','Start 60 seconds');
-    go.onclick=()=>{ st.phase='run'; st.count=0; st.seen=0; nextRapid(); timerSet(r.timer); render(); startTimer(); };
+    go.onclick=()=>{ st.phase='run'; st.count=0; st.seen=0; st.asked=[]; nextRapid(); timerSet(r.timer); render(); startTimer(); };
     bar.appendChild(go); w.appendChild(bar);
     return w;
   }
@@ -1679,33 +1894,50 @@ function roundRapid(r){
   if(st.phase==='run'){
     const q=r.questions[st.q];
     setTimeout(()=>setCounter(`${st.count} correct · ${st.seen} asked`),0);
-    w.appendChild(el('div','qcard',
-      `<div class="qtext">${esc(q.q)}</div>${st.revealed?`<div class="answer">${esc(q.a)}</div>`:''}`));
+    w.appendChild(el('div','qcard',`<div class="qtext">${esc(q.q)}</div>`));
     w.insertAdjacentHTML('beforeend', timerBar());
     const bar=el('div','bar');
     const ok=el('button','btn primary big','Correct &rarr;');
-    ok.onclick=()=>{ st.count++; st.seen++; st.revealed=false; nextRapid(); render(); };
+    ok.onclick=()=>{ markRapid(true); render(); };
     const pass=el('button','btn big','Pass &rarr;');
-    pass.onclick=()=>{ st.seen++; st.revealed=false; nextRapid(); render(); };
-    const show=el('button','btn', st.revealed?'Hide answer':'Show answer');
-    show.onclick=()=>{ st.revealed=!st.revealed; render(); };
+    pass.onclick=()=>{ markRapid(false); render(); };
     const end=el('button','btn ghost','End early');
     end.onclick=()=>{ st.phase='done'; stopTimer(); render(); };
-    bar.append(ok,pass,show,end);
+    bar.append(ok,pass,end);
     w.appendChild(bar);
-    w.appendChild(el('div','note','Space = correct &middot; Right arrow = pass &middot; A = show answer'));
+    w.appendChild(el('div','note','Space = correct &middot; Right arrow = pass'));
     return w;
   }
 
-  setTimeout(()=>setCounter('Time'),0);
-  w.appendChild(el('div','qcard',
-    `<div class="eyebrow">Round over</div>
-     <div class="tally"><span class="big">${st.count}</span><span>correct out of ${st.seen} asked</span></div>`));
+  // done — every question that was asked, with its answer
+  setTimeout(()=>setCounter(`${st.count} correct · ${st.seen} asked`),0);
+  const head=el('div','qcard');
+  head.innerHTML=`<div class="eyebrow">Round over</div>
+    <div class="tally"><span class="big">${st.count}</span><span>correct out of ${st.seen} asked</span></div>`;
+  w.appendChild(head);
+  const list=(st.asked||[]);
+  if(list.length){
+    w.appendChild(el('div','eyebrow','The answers'));
+    const box=el('div','anslist');
+    box.innerHTML=list.map((a,i)=>`<div class="ansrow${a.got?' got':''}">
+        <span class="n">${String(i+1).padStart(2,'0')}</span>
+        <span class="q">${esc(a.q)}</span>
+        <span class="a">${esc(a.a)}</span></div>`).join('');
+    w.appendChild(box);
+  }
   const bar=el('div','bar');
   const again=el('button','btn primary big','Next squatter');
   again.onclick=()=>{ st.phase='ready'; render(); };
   bar.appendChild(again); w.appendChild(bar);
   return w;
+}
+function markRapid(got){
+  const r=R(), st=S.r3, q=r.questions[st.q];
+  if(!st.asked) st.asked=[];
+  st.asked.push({q:q.q, a:q.a, got:!!got});
+  if(got) st.count++;
+  st.seen++;
+  nextRapid();
 }
 function nextRapid(){
   const r=R(), st=S.r3;
@@ -1717,19 +1949,42 @@ function nextRapid(){
 /* ---------- R4: multiple choice ---------- */
 function roundMCQ(r){
   const st=S.r4, q=r.questions[st.i], w=el('div','stack');
+  const done = st.picked!==null && st.picked!==undefined;
   setTimeout(()=>setCounter(`${st.i+1} / ${r.questions.length}`),0);
-  const opts=q.options.map((o,i)=>`<div class="opt${st.revealed&&i===q.correct?' correct':''}">
-      <span class="lt">${'ABCD'[i]}</span><span>${esc(o)}</span></div>`).join('');
-  w.appendChild(el('div','qcard',`<div class="qtext">${esc(q.q)}</div><div class="opts">${opts}</div>`));
-  if(r.timer) w.insertAdjacentHTML('beforeend', timerBar());
+
+  const card=el('div','qcard');
+  card.appendChild(el('div','qtext', esc(q.q)));
+  const opts=el('div','opts');
+  q.options.forEach((o,i)=>{
+    const isRight = i===q.correct, isPick = i===st.picked;
+    let cls='opt pick';
+    if(done && isRight) cls+=' correct';
+    if(done && isPick && !isRight) cls+=' wrong';
+    if(done && !isRight && !isPick) cls+=' dim';
+    const b=el('button',cls,`<span class="lt">${'ABCD'[i]}</span><span>${esc(o)}</span>`);
+    b.onclick=()=>{ st.picked = isPick ? null : i; render(); };
+    opts.appendChild(b);
+  });
+  card.appendChild(opts);
+  if(done){
+    const right = st.picked===q.correct;
+    card.appendChild(el('div','verdict'+(right?' right':' wrong'),
+      right ? 'Correct' : `Wrong &mdash; the answer is ${'ABCD'[q.correct]}. ${esc(q.options[q.correct])}`));
+  }
+  w.appendChild(card);
+
   const bar=el('div','bar');
-  const rev=el('button','btn primary big', st.revealed?'Hide answer':'Reveal answer');
-  rev.onclick=()=>{ st.revealed=!st.revealed; stopTimer(); render(); };
   const prev=el('button','btn','&larr; Prev'); prev.disabled=st.i===0; prev.onclick=()=>go(-1);
-  const next=el('button','btn','Next &rarr;'); next.disabled=st.i>=r.questions.length-1; next.onclick=()=>go(1);
-  bar.append(rev,prev,next);
+  const next=el('button','btn primary','Next &rarr;'); next.disabled=st.i>=r.questions.length-1; next.onclick=()=>go(1);
+  bar.append(prev,next);
+  if(done){
+    const clr=el('button','btn ghost','Clear pick'); clr.onclick=()=>{ st.picked=null; render(); };
+    bar.appendChild(clr);
+  } else {
+    bar.appendChild(el('span','note','Click an option &mdash; or press A, B, C, D'));
+  }
   w.appendChild(bar);
-  function go(d){ st.i=Math.max(0,Math.min(r.questions.length-1,st.i+d)); st.revealed=false; timerSet(r.timer); render(); }
+  function go(d){ st.i=Math.max(0,Math.min(r.questions.length-1,st.i+d)); st.picked=null; render(); }
   return w;
 }
 
@@ -1749,12 +2004,12 @@ function importJSON(){
       try{
         const d=JSON.parse(fr.result);
         if(!d.rounds||!Array.isArray(d.rounds)) throw new Error('no "rounds" array in that file');
-        S.data=d;
+        S.data=d; S.custom=true;
         S.r1={i:0,revealed:false};
         S.r2={tier:'easy',q:null,revealed:false,used:{easy:[],hard:[]},started:false};
-        S.r3={phase:'ready',q:null,used:[],count:0,seen:0,revealed:false};
-        S.r4={i:0,revealed:false};
-        S.ri=0; S.screen='home'; render(); toast('Questions loaded');
+        S.r3={phase:'ready',q:null,used:[],count:0,seen:0,asked:[]};
+        S.r4={i:0,picked:null};
+        S.custom=true; S.ri=0; S.screen='home'; render(); toast('Questions loaded');
       }catch(e){ toast('Could not read that file: '+e.message); }
     };
     fr.readAsText(f);
@@ -1764,39 +2019,72 @@ function importJSON(){
 
 /* ---------- keyboard ---------- */
 document.addEventListener('keydown', e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  if(e.target && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')) return;
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
   const r = S.screen!=='home' ? R() : null;
-  if(e.key===' '){
-    e.preventDefault();
-    if(r && r.format==='rapid' && S.r3.phase==='run' && S.screen==='round'){ S.r3.count++; S.r3.seen++; S.r3.revealed=false; nextRapid(); render(); return; }
+  const rapidRunning = !!(r && r.format==='rapid' && S.r3.phase==='run' && S.screen==='round');
+  const key = e.key;
+
+  if(key===' '||key==='Spacebar'||e.code==='Space'){
+    e.preventDefault(); e.stopPropagation();
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    if(rapidRunning){ markRapid(true); render(); return; }
     const b=$('#view .btn.primary'); if(b && !b.disabled) b.click();
     return;
   }
-  if(e.key==='ArrowRight'){
-    if(r && r.format==='rapid' && S.r3.phase==='run' && S.screen==='round'){ e.preventDefault(); S.r3.seen++; S.r3.revealed=false; nextRapid(); render(); return; }
+  if(key==='ArrowRight'){
+    if(rapidRunning){ e.preventDefault(); markRapid(false); render(); return; }
     const b=[...document.querySelectorAll('#view .btn')].filter(x=>/Next/i.test(x.textContent)&&!x.disabled)[0];
     if(b){ e.preventDefault(); b.click(); }
     return;
   }
-  if(e.key==='ArrowLeft'){
+  if(key==='ArrowLeft'){
     const b=[...document.querySelectorAll('#view .btn')].filter(x=>/Prev/i.test(x.textContent)&&!x.disabled)[0];
     if(b){ e.preventDefault(); b.click(); }
     return;
   }
-  if(e.key==='a'||e.key==='A'){
-    if(r && r.format==='rapid' && S.r3.phase==='run' && S.screen==='round'){ e.preventDefault(); S.r3.revealed=!S.r3.revealed; render(); }
+  if(r && r.format==='mcq' && S.screen==='round' && /^[a-dA-D]$/.test(key)){
+    const i='abcd'.indexOf(key.toLowerCase());
+    const q=r.questions[S.r4.i];
+    if(q && i < q.options.length){ e.preventDefault(); S.r4.picked = (S.r4.picked===i? null : i); render(); }
     return;
   }
-  if(e.key==='t'||e.key==='T'){ if($('#clock')){ e.preventDefault(); toggleTimer(); } return; }
-  if(e.key==='Escape'){ if(S.screen!=='home'){ S.screen='home'; stopTimer(); render(); } }
-});
+  if(key==='t'||key==='T'){ if($('#clock')){ e.preventDefault(); toggleTimer(); } return; }
+  if(key==='Escape'){
+    if(!$('#menu').hidden){ closeMenu(); return; }
+    if(S.screen!=='home'){ S.screen='home'; stopTimer(); render(); }
+  }
+}, true);
 
 /* ---------- boot ---------- */
-$('#brand').onclick=()=>{ S.screen='home'; stopTimer(); render(); };
+$('#brand').onclick=()=>{ closeMenu(); S.screen='home'; stopTimer(); render(); };
+$('#menubtn').onclick=e=>{
+  e.stopPropagation();
+  const m=$('#menu'), open=m.hidden;
+  m.hidden=!open; $('#menubtn').setAttribute('aria-expanded', String(open));
+};
+document.addEventListener('click', e=>{
+  const m=$('#menu');
+  if(!m.hidden && !m.contains(e.target) && e.target!==$('#menubtn')) closeMenu();
+});
 (function(){
   const saved=load();
-  if(saved && saved.data && saved.data.rounds){
-    Object.assign(S, saved);
+  if(saved){
+    if(saved.data && saved.data.rounds){ S.data=saved.data; S.custom=true; }
+    ['r1','r2','r3','r4'].forEach(k=>{ if(saved[k]) S[k]=Object.assign(S[k], saved[k]); });
+    if(typeof saved.ri==='number') S.ri=saved.ri;
+    if(saved.screen) S.screen=saved.screen;
+    // keep every pointer inside the current question set
+    S.ri=Math.min(S.ri, S.data.rounds.length-1);
+    const cap=(v,n)=> (typeof v==='number' && v>=0 && v<n) ? v : 0;
+    const q1=S.data.rounds[0].questions||[], q4=S.data.rounds[3].questions||[];
+    S.r1.i=cap(S.r1.i,q1.length); S.r4.i=cap(S.r4.i,q4.length); S.r4.picked=null;
+    const trim=(arr,n)=>(arr||[]).filter(i=>i<n);
+    S.r2.used={easy:trim(S.r2.used&&S.r2.used.easy,(S.data.rounds[1].easyQuestions||[]).length),
+               hard:trim(S.r2.used&&S.r2.used.hard,(S.data.rounds[1].hardQuestions||[]).length)};
+    S.r2.started=false;
+    S.r3.used=trim(S.r3.used,(S.data.rounds[2].questions||[]).length);
+    if(S.r3.phase==='run') S.r3.phase='ready';
     S.t={total:0,left:0,on:false,id:null};
     if(S.screen==='round') timerSet(R().timer||0);
   }
